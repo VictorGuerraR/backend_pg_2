@@ -1,13 +1,23 @@
 import type { Knex } from "knex";
 
 export async function up(knex: Knex): Promise<void> {
-  await knex.schema
-    .createSchemaIfNotExists('registros')
-    .createTable('registros.porcentajes_depreciacion', (table) => {
-      table.increments('cod_tipo_depreciacion').primary();
-      table.string('descripcion').notNullable();
-      table.decimal('porcentaje_depreciacion_anual', 5, 2).notNullable();
-    });
+  await knex.schema.createSchema('registros');
+
+  await knex.schema.withSchema('registros').createTable('usuarios', (table) => {
+    table.increments('cod_usuario').primary();
+    table.date('fecha_creacion').defaultTo(knex.fn.now());
+    table.string('nombres').notNullable();
+    table.string('apellidos').notNullable();
+    table.string('pass', 64).notNullable();
+    table.boolean('activo').notNullable().defaultTo(true);
+    table.date('fecha_inactivacion');
+  });
+
+  await knex.schema.withSchema('registros').createTable('porcentajes_depreciacion', (table) => {
+    table.increments('cod_tipo_depreciacion').primary();
+    table.string('descripcion').notNullable();
+    table.decimal('porcentaje_depreciacion_anual', 5, 2).notNullable();
+  });
 
   await knex('registros.porcentajes_depreciacion').insert([
     { descripcion: 'Edificios, construcciones e instalaciones adheridas a los inmuebles y sus mejoras', porcentaje_depreciacion_anual: 5.00 },
@@ -17,66 +27,87 @@ export async function up(knex: Knex): Promise<void> {
     { descripcion: 'Equipo de computación', porcentaje_depreciacion_anual: 33.33 },
     { descripcion: 'Herramientas, porcelana, cristalería, mantelería, cubiertos y similares', porcentaje_depreciacion_anual: 25.00 },
     { descripcion: 'Reproductores de raza, machos y hembras, la depreciación se calcula sobre el valor de costo de tales animales menos su valor como ganado común', porcentaje_depreciacion_anual: 25.00 },
-    { descripcion: 'Para los bienes muebles no indicados en los incisos anteriores', porcentaje_depreciacion_anual: 10.00 }
+    { descripcion: 'Para los bienes muebles no indicados en los incisos anteriores', porcentaje_depreciacion_anual: 10.00 },
   ]);
 
-  await knex.schema
-    .createTable('registros.materia_prima', (table) => {
-      table.increments('cod_materia_prima').primary();
-      table.string('descripcion', 300);
-      table.string('codigo_moneda', 3).defaultTo('GTQ');
-      table.decimal('monto', 13, 2);
-      table.decimal('cantidad', 13, 2);
-      table.string('codigo_unidad', 2);
-    })
-    .createTable('registros.herramienta', (table) => {
-      table.increments('cod_herramienta').primary();
-      table.integer('cod_tipo_depreciacion').references('cod_tipo_depreciacion').inTable('registros.porcentajes_depreciacion');
-      table.string('descripcion', 300);
-      table.string('codigo_moneda', 3).defaultTo('GTQ');
-      table.decimal('monto', 13, 2);
-      table.boolean('activo');
-      table.decimal('consumo_electrico', 13, 2);
-    })
-    .createTable('registros.maestro', (table) => {
-      table.increments('cod_detalle').primary();
-      table.date('fecha_creacion').defaultTo(knex.fn.now());
-      table.date('fecha_maestro');
-      table.string('codigo_moneda', 3).defaultTo('GTQ');
-      table.decimal('monto_total', 13, 2);
-      table.decimal('porcentaje_impuesto', 5, 2);
-      table.decimal('monto_impuesto', 13, 2);
-      table.decimal('precio_kW', 13, 2);
-    })
-    .createTable('registros.detalle_bien', (table) => {
-      table.increments('cod_detalle_bien').primary();
-      table.integer('cod_materia_prima').references('cod_materia_prima').inTable('registros.materia_prima');
-      table.date('fecha_creacion').defaultTo(knex.fn.now());
-      table.string('codigo_moneda', 3).defaultTo('GTQ');
-      table.decimal('monto_total', 13, 2);
-      table.string('codigo_unidad', 2);
-      table.decimal('unidad', 13, 2);
-      table.integer('cod_detalle').references('cod_detalle').inTable('registros.maestro');
-    })
-    .createTable('registros.detalle_servicio', (table) => {
-      table.increments('cod_servicio').primary();
-      table.integer('cod_herramienta').references('cod_herramienta').inTable('registros.herramienta');
-      table.date('fecha_creacion').defaultTo(knex.fn.now());
-      table.string('codigo_moneda', 3).defaultTo('GTQ');
-      table.decimal('tiempo_uso', 13, 2);
-      table.decimal('unidad', 13, 2);
-      table.decimal('monto_total', 13, 2);
-      table.integer('cod_detalle').references('cod_detalle').inTable('registros.maestro');
-    });
+  await knex.schema.withSchema('registros').createTable('materia_prima', (table) => {
+    table.increments('cod_materia_prima').primary();
+    table.integer('cod_usuario_creacion').references('cod_usuario').inTable('registros.usuarios');
+    table.date('fecha_creacion').defaultTo(knex.fn.now());
+    table.string('descripcion', 300);
+    table.string('codigo_moneda', 3).notNullable().defaultTo('GTQ');
+    table.decimal('monto', 13, 2);
+    table.decimal('cantidad', 13, 2);
+    table.string('codigo_unidad', 2);
+  });
+
+  await knex.schema.withSchema('registros').createTable('herramienta', (table) => {
+    table.increments('cod_herramienta').primary();
+    table.integer('cod_tipo_depreciacion').references('cod_tipo_depreciacion').inTable('registros.porcentajes_depreciacion');
+    table.integer('cod_usuario_creacion').references('cod_usuario').inTable('registros.usuarios');
+    table.date('fecha_creacion').defaultTo(knex.fn.now());
+    table.boolean('activo').notNullable().defaultTo(true);
+    table.integer('cod_usuario_anulacion').references('cod_usuario').inTable('registros.usuarios');
+    table.date('fecha_anulacion');
+    table.string('descripcion', 300);
+    table.string('codigo_moneda', 3).notNullable().defaultTo('GTQ');
+    table.decimal('monto', 13, 2);
+    table.decimal('consumo_electrico', 13, 2);
+  });
+
+  await knex.schema.withSchema('registros').createTable('maestro', (table) => {
+    table.increments('cod_detalle').primary();
+    table.integer('cod_usuario_creacion').references('cod_usuario').inTable('registros.usuarios');
+    table.date('fecha_creacion').defaultTo(knex.fn.now());
+    table.boolean('activo').notNullable().defaultTo(true);
+    table.integer('cod_usuario_anulacion').references('cod_usuario').inTable('registros.usuarios');
+    table.date('fecha_anulacion');
+    table.date('fecha_maestro');
+    table.string('codigo_moneda', 3).notNullable().defaultTo('GTQ');
+    table.decimal('monto_total', 13, 2);
+    table.decimal('porcentaje_impuesto', 5, 2);
+    table.decimal('monto_impuesto', 13, 2);
+    table.decimal('precio_kW', 13, 2);
+  });
+
+  await knex.schema.withSchema('registros').createTable('detalle_bien', (table) => {
+    table.increments('cod_detalle_bien').primary();
+    table.integer('cod_materia_prima').references('cod_materia_prima').inTable('registros.materia_prima');
+    table.integer('cod_usuario_creacion').references('cod_usuario').inTable('registros.usuarios');
+    table.date('fecha_creacion').defaultTo(knex.fn.now());
+    table.boolean('activo').notNullable().defaultTo(true);
+    table.integer('cod_usuario_anulacion').references('cod_usuario').inTable('registros.usuarios');
+    table.date('fecha_anulacion');
+    table.string('codigo_moneda', 3).notNullable().defaultTo('GTQ');
+    table.decimal('monto_total', 13, 2);
+    table.string('codigo_unidad', 2);
+    table.decimal('unidad', 13, 2);
+    table.integer('cod_detalle').references('cod_detalle').inTable('registros.maestro');
+  });
+
+  await knex.schema.withSchema('registros').createTable('detalle_servicio', (table) => {
+    table.increments('cod_servicio').primary();
+    table.integer('cod_herramienta').references('cod_herramienta').inTable('registros.herramienta');
+    table.integer('cod_usuario_creacion').references('cod_usuario').inTable('registros.usuarios');
+    table.date('fecha_creacion').defaultTo(knex.fn.now());
+    table.boolean('activo').notNullable().defaultTo(true);
+    table.integer('cod_usuario_anulacion').references('cod_usuario').inTable('registros.usuarios');
+    table.date('fecha_anulacion');
+    table.string('codigo_moneda', 3).notNullable().defaultTo('GTQ');
+    table.decimal('tiempo_uso', 13, 2);
+    table.decimal('unidad', 13, 2);
+    table.decimal('monto_total', 13, 2);
+    table.integer('cod_detalle').references('cod_detalle').inTable('registros.maestro');
+  });
 }
 
 export async function down(knex: Knex): Promise<void> {
-  await knex.schema
-    .dropTableIfExists('registros.detalle_servicio')
-    .dropTableIfExists('registros.detalle_bien')
-    .dropTableIfExists('registros.maestro')
-    .dropTableIfExists('registros.herramienta')
-    .dropTableIfExists('registros.materia_prima')
-    .dropTableIfExists('registros.porcentajes_depreciacion')
-    .dropSchemaIfExists('registros');
+  await knex.schema.withSchema('registros').dropTableIfExists('detalle_servicio');
+  await knex.schema.withSchema('registros').dropTableIfExists('detalle_bien');
+  await knex.schema.withSchema('registros').dropTableIfExists('maestro');
+  await knex.schema.withSchema('registros').dropTableIfExists('herramienta');
+  await knex.schema.withSchema('registros').dropTableIfExists('materia_prima');
+  await knex.schema.withSchema('registros').dropTableIfExists('porcentajes_depreciacion');
+  await knex.schema.withSchema('registros').dropTableIfExists('usuarios');
+  await knex.schema.dropSchemaIfExists('registros');
 }
