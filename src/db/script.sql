@@ -6,7 +6,8 @@ create table registros.usuarios(
     fecha_creacion DATE DEFAULT CURRENT_DATE,
     nombres VARCHAR NOT null,
     apellidos VARCHAR NOT null,
-    pass CHAR(64) NOT null,
+    usuario VARCHAR NOT null,
+    "password" CHAR(64) NOT null,
     activo boolean not null default true,
     fecha_inactivacion date
 );
@@ -40,6 +41,15 @@ CREATE TABLE registros.materia_prima (
     cantidad NUMERIC(13, 2),
     codigo_unidad VARCHAR(2)
 );
+
+CREATE TABLE registros.movimiento_materia_prima (
+    cod_registro_materia_prima SERIAL PRIMARY KEY,
+    cod_materia_prima INT REFERENCES registros.materia_prima(cod_materia_prima),
+    cod_usuario_creacion INT REFERENCES registros.usuarios(cod_usuario),
+    fecha_creacion DATE DEFAULT CURRENT_DATE,
+    cantidad NUMERIC(13, 2)
+);
+
 
 -- Tabla herramienta
 CREATE TABLE registros.herramienta (
