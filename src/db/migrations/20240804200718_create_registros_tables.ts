@@ -55,6 +55,7 @@ export async function up(knex: Knex): Promise<void> {
     table.date('fecha_creacion').defaultTo(knex.fn.now());
     table.boolean('activo').notNullable().defaultTo(true);
     table.integer('cod_usuario_anulacion').references('cod_usuario').inTable('registros.usuarios');
+    table.integer('cod_usuario_responsable').references('cod_usuario').inTable('registros.usuarios');
     table.date('fecha_anulacion');
     table.string('descripcion', 300);
     table.string('codigo_moneda', 3).notNullable().defaultTo('GTQ');

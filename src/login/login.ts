@@ -11,7 +11,7 @@ function obtenerUsuario(cod_usuario: number | null, usuario: string | null): any
       'fecha_creacion',
       'nombres',
       'apellidos',
-      'pass',
+      'password',
       'activo',
       'fecha_inactivacion',
     )
@@ -24,7 +24,6 @@ function obtenerUsuario(cod_usuario: number | null, usuario: string | null): any
 
   return query
 }
-
 
 async function generarToken(usuario: string, pass: string): Promise<string | null> {
 

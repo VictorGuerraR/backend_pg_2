@@ -45,6 +45,9 @@
       ],
       "#middleware": [
         "./src/login/login.ts"
+      ],
+      "#types/*": [
+        "./src/types/*"
       ]
     },
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
