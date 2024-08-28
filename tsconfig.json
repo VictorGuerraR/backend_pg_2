@@ -44,7 +44,7 @@
         "./src/registros/*"
       ],
       "#middleware": [
-        "./src/login/login.ts"
+        "./src/login/middleware.ts"
       ],
       "#types/*": [
         "./src/types/*"

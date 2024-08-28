@@ -1,4 +1,4 @@
-export interface DetalleBien {
+export type DetalleBien = {
   cod_detalle_bien: number;
   cod_materia_prima: number;
   cod_usuario_creacion: number;

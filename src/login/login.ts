@@ -1,10 +1,13 @@
+import db from '#conexion'
 import bcrypt from 'bcrypt'
-import jwt, { JwtPayload } from 'jsonwebtoken'
-import db from '../db/db'
+import jwt from 'jsonwebtoken'
+import { Usuario } from '#types/usuarios';
+import { Request, Response } from 'express';
+
 
 const vencimiento = '12h';
 
-function obtenerUsuario(cod_usuario: number | null, usuario: string | null): any {
+export async function obtenerUsuario(cod_usuario: number | null, usuario: string | null): Promise<Usuario> {
   const query = db('registros.usuarios')
     .select(
       'cod_usuario',
@@ -15,6 +18,7 @@ function obtenerUsuario(cod_usuario: number | null, usuario: string | null): any
       'activo',
       'fecha_inactivacion',
     )
+    .first()
 
   if (cod_usuario) {
     query.where({ cod_usuario })
@@ -22,15 +26,14 @@ function obtenerUsuario(cod_usuario: number | null, usuario: string | null): any
     query.where({ usuario })
   }
 
-  return query
+  return await query
 }
 
 async function generarToken(usuario: string, pass: string): Promise<string | null> {
-
   const {
     cod_usuario,
     password
-  } = await obtenerUsuario(null, usuario)
+  } = obtenerUsuario(null, usuario)
 
   if (await bcrypt.compare(pass, password)) {
     const token = jwt.sign({ cod_usuario }, password, { expiresIn: vencimiento })
@@ -39,7 +42,7 @@ async function generarToken(usuario: string, pass: string): Promise<string | nul
   return null
 }
 
-export async function login(req: any, res: any): Promise<any> {
+export async function login(req: Request, res: Response): Promise<any> {
   try {
     const {
       usuario,
@@ -58,33 +61,14 @@ export async function login(req: any, res: any): Promise<any> {
   }
 }
 
-const verificarToken = async (token: any): Promise<any> => {
-  if (!token) return false
+export async function creacionUsuario(req: Request, res: Response) {
 
-  const decodedToken = jwt.decode(token);
-
-  if (decodedToken && typeof decodedToken !== 'string') {
-    const { cod_usuario } = decodedToken as JwtPayload;
-    if (cod_usuario) {
-      const usuario = await obtenerUsuario(cod_usuario, null)
-
-      const valido = jwt.verify(token, usuario?.password)
-      if (valido) return valido
-    }
-  }
-
-  return false;
 }
 
-export async function middleware(req: any, res: any, next: any): Promise<any> {
-  try {
-    const { cod_usuario } = await verificarToken(req.headers.token)
-    if (cod_usuario) {
-      req.usuario = await obtenerUsuario(cod_usuario, null)
-      return next()
-    }
-    res.status(404).send();
-  } catch (err) {
-    res.status(500).send()
-  }
+export async function deshabilitarUsuario(req: Request, res: Response) {
+
+}
+
+export async function actualizacionUsuario(req: Request, res: Response) {
+
 }

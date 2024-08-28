@@ -1,4 +1,4 @@
-export interface MateriaPrima {
+export type MateriaPrima = {
   cod_materia_prima: number;
   cod_usuario_creacion: number;
   fecha_creacion: Date;

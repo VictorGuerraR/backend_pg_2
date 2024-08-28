@@ -1,4 +1,4 @@
-export interface DetalleServicio {
+export type DetalleServicio = {
   cod_servicio: number;
   cod_herramienta: number;
   cod_usuario_creacion: number;

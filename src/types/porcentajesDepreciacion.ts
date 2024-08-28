@@ -1,4 +1,4 @@
-export interface PorcentajesDepreciacion {
+export type PorcentajesDepreciacion = {
   cod_tipo_depreciacion: number;
   descripcion: string;
   porcentaje_depreciacion_anual: number;

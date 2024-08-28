@@ -1,4 +1,4 @@
-export interface Herramienta {
+export type Herramienta = {
   cod_herramienta: number;
   cod_usuario_responsable: number;
   cod_tipo_depreciacion: number;

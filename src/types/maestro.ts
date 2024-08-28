@@ -1,4 +1,4 @@
-export interface Maestro {
+export type Maestro = {
   cod_detalle: number;
   cod_usuario_creacion: number;
   fecha_creacion: Date;

@@ -50,11 +50,11 @@ CREATE TABLE registros.movimiento_materia_prima (
     cantidad NUMERIC(13, 2)
 );
 
-
 -- Tabla herramienta
 CREATE TABLE registros.herramienta (
     cod_herramienta SERIAL PRIMARY KEY,
     cod_tipo_depreciacion INT REFERENCES registros.porcentajes_depreciacion(cod_tipo_depreciacion),
+    cod_usuario_responsable int references registros.usuarios(cod_usuario),
     cod_usuario_creacion int references registros.usuarios(cod_usuario),
     fecha_creacion DATE DEFAULT CURRENT_DATE,
     activo BOOLEAN not null default true,
