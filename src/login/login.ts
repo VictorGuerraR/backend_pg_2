@@ -1,7 +1,15 @@
 import db from '#conexion'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import { Usuario } from '#types/usuarios';
+import {
+  Usuario,
+  Creacion,
+  Actualizacion,
+  Desactivacion,
+  creacionUsuario,
+  actualizacionUsuario,
+  desactivacionUsuario
+} from '#types/usuarios';
 import { Request, Response } from 'express';
 
 
@@ -14,11 +22,12 @@ export async function obtenerUsuario(cod_usuario: number | null, usuario: string
       'fecha_creacion',
       'nombres',
       'apellidos',
+      'usuario',
       'password',
       'activo',
-      'fecha_inactivacion',
     )
     .first()
+    .where('activo', true)
 
   if (cod_usuario) {
     query.where({ cod_usuario })
@@ -33,7 +42,7 @@ async function generarToken(usuario: string, pass: string): Promise<string | nul
   const {
     cod_usuario,
     password
-  } = obtenerUsuario(null, usuario)
+  } = await obtenerUsuario(null, usuario)
 
   if (await bcrypt.compare(pass, password)) {
     const token = jwt.sign({ cod_usuario }, password, { expiresIn: vencimiento })
@@ -44,31 +53,53 @@ async function generarToken(usuario: string, pass: string): Promise<string | nul
 
 export async function login(req: Request, res: Response): Promise<any> {
   try {
-    const {
-      usuario,
-      password
-    } = req.body
-
+    const { usuario, password } = req.body
     const token = await generarToken(usuario, password)
-
-    if (token) {
-      res.json({ token })
-    } else {
-      res.status(403).json({})
-    }
+    res.status(200).json({ token })
   } catch (err) {
     res.status(500).json()
   }
 }
 
-export async function creacionUsuario(req: Request, res: Response) {
-
+export async function creacion(req: Request, res: Response) {
+  try {
+    let respuesta
+    const usuario: Creacion = creacionUsuario.parse(req.body)
+    await db.transaction(async (trx) => {
+      usuario.password = await bcrypt.hash(usuario.password, 10)
+      usuario.usuario = `${usuario.nombres.replace(/\s+/g, '').toLowerCase()}.${usuario.apellidos.replace(/\s+/g, '').toLowerCase()}`
+      respuesta = await trx('registros.usuarios')
+        .insert(usuario)
+        .returning('*')
+    })
+    res.status(200).json({ respuesta })
+  } catch (error) {
+    res.status(500).json({ error })
+  }
 }
 
-export async function deshabilitarUsuario(req: Request, res: Response) {
-
+export async function deshabilitar(req: Request, res: Response) {
+  try {
+    const { cod_usuario, ...usuario }: Desactivacion = desactivacionUsuario.parse(req.body)
+    await db.transaction(async (trx) => {
+      await trx('registros.usuarios')
+        .update(usuario)
+        .where({ cod_usuario })
+    })
+  } catch (error) {
+    res.status(500).json({ error })
+  }
 }
 
-export async function actualizacionUsuario(req: Request, res: Response) {
-
+export async function actualizacion(req: Request, res: Response) {
+  try {
+    const { cod_usuario, ...usuario }: Actualizacion = actualizacionUsuario.parse(req.body)
+    await db.transaction(async (trx) => {
+      await trx('registros.usuarios')
+        .update(usuario)
+        .where({ cod_usuario })
+    })
+  } catch (error) {
+    res.status(500).json({ error })
+  }
 }

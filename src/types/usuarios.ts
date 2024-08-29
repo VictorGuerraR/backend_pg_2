@@ -14,6 +14,7 @@ export type Usuario = {
 export const creacionUsuario = z.object({
   cod_usuario: z.number(),
   nombres: z.string(),
+  usuario: z.string(),
   apellidos: z.string(),
   password: z.string(),
 });
@@ -23,12 +24,11 @@ export const actualizacionUsuario = z.object({
   cod_usuario: z.number(),
   nombres: z.string(),
   apellidos: z.string(),
-  usuario: z.string(),
   password: z.string(),
 });
 
 // Define el esquema para Inactivacion
-export const inactivacionUsuario = z.object({
+export const desactivacionUsuario = z.object({
   cod_usuario: z.number(),
   activo: z.boolean().default(false),
   fecha_inactivacion: z.date().default(() => new Date()),
@@ -36,4 +36,4 @@ export const inactivacionUsuario = z.object({
 
 export type Creacion = z.infer<typeof creacionUsuario>;
 export type Actualizacion = z.infer<typeof actualizacionUsuario>;
-export type Inactivacion = z.infer<typeof inactivacionUsuario>;
+export type Desactivacion = z.infer<typeof desactivacionUsuario>;
