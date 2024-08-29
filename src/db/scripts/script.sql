@@ -68,13 +68,12 @@ CREATE TABLE registros.herramienta (
 
 -- Tabla maestro
 CREATE TABLE registros.maestro (
-    cod_detalle SERIAL PRIMARY KEY,
+    cod_maestro SERIAL PRIMARY KEY,
     cod_usuario_creacion int references registros.usuarios(cod_usuario),
     fecha_creacion DATE DEFAULT CURRENT_DATE,
     activo BOOLEAN not null default true,
     cod_usuario_anulacion int references registros.usuarios(cod_usuario),
     fecha_anulacion date,
-    fecha_maestro DATE,
     codigo_moneda VARCHAR(3) not null default 'GTQ',
     monto_total NUMERIC(13, 2),
     porcentaje_impuesto NUMERIC(5, 2),
@@ -100,7 +99,7 @@ CREATE TABLE registros.detalle_bien (
 
 -- Tabla detalle_servicio
 CREATE TABLE registros.detalle_servicio (
-    cod_servicio SERIAL PRIMARY KEY,
+    cod_detalle_servicio SERIAL PRIMARY KEY,
     cod_herramienta INT REFERENCES registros.herramienta(cod_herramienta),
     cod_usuario_creacion int references registros.usuarios(cod_usuario),
     fecha_creacion DATE DEFAULT CURRENT_DATE,

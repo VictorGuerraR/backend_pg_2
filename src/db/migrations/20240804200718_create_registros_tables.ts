@@ -65,13 +65,12 @@ export async function up(knex: Knex): Promise<void> {
 
   // Crear tabla 'maestro'
   await knex.schema.withSchema('registros').createTable('maestro', (table) => {
-    table.increments('cod_detalle').primary();
+    table.increments('cod_maestro').primary();
     table.integer('cod_usuario_creacion').references('cod_usuario').inTable('registros.usuarios');
     table.date('fecha_creacion').defaultTo(knex.fn.now());
     table.boolean('activo').notNullable().defaultTo(true);
     table.integer('cod_usuario_anulacion').references('cod_usuario').inTable('registros.usuarios');
     table.date('fecha_anulacion');
-    table.date('fecha_maestro');
     table.string('codigo_moneda', 3).notNullable().defaultTo('GTQ');
     table.decimal('monto_total', 13, 2);
     table.decimal('porcentaje_impuesto', 5, 2);
@@ -97,7 +96,7 @@ export async function up(knex: Knex): Promise<void> {
 
   // Crear tabla 'detalle_servicio'
   await knex.schema.withSchema('registros').createTable('detalle_servicio', (table) => {
-    table.increments('cod_servicio').primary();
+    table.increments('cod_detalle_servicio').primary();
     table.integer('cod_herramienta').references('cod_herramienta').inTable('registros.herramienta');
     table.integer('cod_usuario_creacion').references('cod_usuario').inTable('registros.usuarios');
     table.date('fecha_creacion').defaultTo(knex.fn.now());

@@ -11,18 +11,15 @@ export type Usuario = {
 }
 
 // Define el esquema para Creacion
-export const creacionSchema = z.object({
+export const creacionUsuario = z.object({
   cod_usuario: z.number(),
   nombres: z.string(),
   apellidos: z.string(),
   password: z.string(),
 });
 
-// Inferir el tipo desde el esquema (opcional si ya tienes el tipo definido)
-export type Creacion = z.infer<typeof creacionSchema>;
-
 // Define el esquema para Actualizacion
-export const actualizacionSchema = z.object({
+export const actualizacionUsuario = z.object({
   cod_usuario: z.number(),
   nombres: z.string(),
   apellidos: z.string(),
@@ -30,15 +27,13 @@ export const actualizacionSchema = z.object({
   password: z.string(),
 });
 
-// Inferir el tipo desde el esquema (opcional si ya tienes el tipo definido)
-export type Actualizacion = z.infer<typeof actualizacionSchema>;
-
 // Define el esquema para Inactivacion
-export const inactivacionSchema = z.object({
+export const inactivacionUsuario = z.object({
   cod_usuario: z.number(),
   activo: z.boolean().default(false),
   fecha_inactivacion: z.date().default(() => new Date()),
 });
 
-// Inferir el tipo desde el esquema si es necesario
-export type Inactivacion = z.infer<typeof inactivacionSchema>;
+export type Creacion = z.infer<typeof creacionUsuario>;
+export type Actualizacion = z.infer<typeof actualizacionUsuario>;
+export type Inactivacion = z.infer<typeof inactivacionUsuario>;

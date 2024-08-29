@@ -1,7 +1,11 @@
-export type MovimientoMateriaPrima = {
-  cod_registro_materia_prima: number;
-  cod_materia_prima: number;
-  cod_usuario_creacion: number;
-  fecha_creacion: Date;
-  cantidad: number;
-}
+import { z } from 'zod';
+
+export const creacionMovimientoMateriaPrima = z.object({
+  cod_registro_materia_prima: z.number(),
+  cod_materia_prima: z.number(),
+  cod_usuario_creacion: z.number(),
+  fecha_creacion: z.date().default(() => new Date()),
+  cantidad: z.number()
+})
+
+export type MovimientoMateriaPrima = z.infer<typeof creacionMovimientoMateriaPrima>
