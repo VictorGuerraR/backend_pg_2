@@ -1,6 +1,7 @@
 import db from '#conexion'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import { Request, Response } from 'express';
 import {
   Usuario,
   Creacion,
@@ -10,11 +11,12 @@ import {
   actualizacionUsuario,
   desactivacionUsuario
 } from '#types/usuarios';
-import { Request, Response } from 'express';
 
-const vencimiento = '12h';
+export async function obtenerUsuario(cod_usuario: number | null, usuario: string | null): Promise<Usuario | null> {
+  if (!cod_usuario && !usuario) {
+    return null; // Devuelve null o lanza un error si ambos son nulos
+  }
 
-export async function obtenerUsuario(cod_usuario: number | null, usuario: string | null): Promise<Usuario> {
   const query = db('registros.usuarios')
     .select(
       'cod_usuario',
@@ -26,28 +28,31 @@ export async function obtenerUsuario(cod_usuario: number | null, usuario: string
       'activo',
     )
     .first()
-    .where('activo', true)
+    .where('activo', true);
 
   if (cod_usuario) {
-    query.where({ cod_usuario })
-  } else {
-    query.where({ usuario })
+    query.where({ cod_usuario });
+  } else if (usuario) {
+    query.where({ usuario });
   }
 
-  return await query
+  return await query;
 }
 
 async function generarToken(usuario: string, pass: string): Promise<string | null> {
-  const {
-    cod_usuario,
-    password
-  } = await obtenerUsuario(null, usuario)
+  const usuarioData = await obtenerUsuario(null, usuario);
 
-  if (await bcrypt.compare(pass, password)) {
-    const token = jwt.sign({ cod_usuario }, password, { expiresIn: vencimiento })
-    return token
+  if (!usuarioData) { return null }
+
+  const { cod_usuario, password } = usuarioData;
+
+  const passwordMatch = await bcrypt.compare(pass, password);
+  if (passwordMatch) {
+    const token = jwt.sign({ cod_usuario }, process.env.JWT_SECRET!, { expiresIn: process.env.JWT_EXPIRATION || '12h' });
+    return token;
   }
-  return null
+
+  return null;
 }
 
 export async function token(req: Request, res: Response): Promise<any> {
