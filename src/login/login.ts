@@ -1,4 +1,4 @@
-import db from '@conexion'
+import db from '#conexion'
 import bcrypt from 'bcrypt'
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken'
@@ -11,7 +11,7 @@ import {
   creacionUsuario,
   actualizacionUsuario,
   desactivacionUsuario
-} from '@types/usuarios';
+} from '#types/usuarios';
 
 dotenv.config();
 const expiresIn = process.env.JWT_EXPIRATION || '12h'
@@ -73,6 +73,7 @@ export async function token(req: Request, res: Response): Promise<any> {
 export async function creacion(req: Request, res: Response) {
   try {
     let respuesta
+    console.log(req.body)
     const usuario: Creacion = creacionUsuario.parse(req.body)
     await db.transaction(async (trx) => {
       usuario.password = await bcrypt.hash(usuario.password, 10)

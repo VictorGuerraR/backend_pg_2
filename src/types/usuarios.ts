@@ -12,9 +12,8 @@ export type Usuario = {
 
 // Define el esquema para Creacion
 export const creacionUsuario = z.object({
-  cod_usuario: z.number(),
   nombres: z.string(),
-  usuario: z.string(),
+  usuario: z.string()/* .default('sin_asignar') */,
   apellidos: z.string(),
   password: z.string(),
 });
