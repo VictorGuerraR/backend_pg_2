@@ -12,7 +12,6 @@ import {
 } from '#types/usuarios';
 import { Request, Response } from 'express';
 
-
 const vencimiento = '12h';
 
 export async function obtenerUsuario(cod_usuario: number | null, usuario: string | null): Promise<Usuario> {
@@ -51,7 +50,7 @@ async function generarToken(usuario: string, pass: string): Promise<string | nul
   return null
 }
 
-export async function login(req: Request, res: Response): Promise<any> {
+export async function token(req: Request, res: Response): Promise<any> {
   try {
     const { usuario, password } = req.body
     const token = await generarToken(usuario, password)
@@ -78,9 +77,9 @@ export async function creacion(req: Request, res: Response) {
   }
 }
 
-export async function deshabilitar(req: Request, res: Response) {
+export async function actualizacion(req: Request, res: Response) {
   try {
-    const { cod_usuario, ...usuario }: Desactivacion = desactivacionUsuario.parse(req.body)
+    const { cod_usuario, ...usuario }: Actualizacion = actualizacionUsuario.parse(req.body)
     await db.transaction(async (trx) => {
       await trx('registros.usuarios')
         .update(usuario)
@@ -91,9 +90,9 @@ export async function deshabilitar(req: Request, res: Response) {
   }
 }
 
-export async function actualizacion(req: Request, res: Response) {
+export async function deshabilitar(req: Request, res: Response) {
   try {
-    const { cod_usuario, ...usuario }: Actualizacion = actualizacionUsuario.parse(req.body)
+    const { cod_usuario, ...usuario }: Desactivacion = desactivacionUsuario.parse(req.body)
     await db.transaction(async (trx) => {
       await trx('registros.usuarios')
         .update(usuario)
