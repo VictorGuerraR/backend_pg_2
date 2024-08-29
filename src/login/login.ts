@@ -1,5 +1,6 @@
-import db from '#conexion'
+import db from '@conexion'
 import bcrypt from 'bcrypt'
+import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken'
 import { Request, Response } from 'express';
 import {
@@ -10,7 +11,11 @@ import {
   creacionUsuario,
   actualizacionUsuario,
   desactivacionUsuario
-} from '#types/usuarios';
+} from '@types/usuarios';
+
+dotenv.config();
+const expiresIn = process.env.JWT_EXPIRATION || '12h'
+const JWT_SECRET = process.env.JWT_SECRET || ''
 
 export async function obtenerUsuario(cod_usuario: number | null, usuario: string | null): Promise<Usuario | null> {
   if (!cod_usuario && !usuario) {
@@ -48,7 +53,7 @@ async function generarToken(usuario: string, pass: string): Promise<string | nul
 
   const passwordMatch = await bcrypt.compare(pass, password);
   if (passwordMatch) {
-    const token = jwt.sign({ cod_usuario }, process.env.JWT_SECRET!, { expiresIn: process.env.JWT_EXPIRATION || '12h' });
+    const token = jwt.sign({ cod_usuario }, JWT_SECRET, { expiresIn });
     return token;
   }
 

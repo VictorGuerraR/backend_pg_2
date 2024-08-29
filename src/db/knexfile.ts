@@ -5,12 +5,13 @@ import type { Knex } from 'knex';
 dotenv.config();
 
 const environment = process.env.ENVIROMENT || 'development';
+const bd_conection = process.env.DB_CONECTION || ''
 
 export const config: { [key: string]: Knex.Config } = {
   development: {
     client: 'pg',
     connection: {
-      connectionString: process.env.DB_CONECTION,
+      connectionString: bd_conection,
     },
     migrations: {
       directory: path.join(__dirname, 'src/db/migrations'),
@@ -20,7 +21,7 @@ export const config: { [key: string]: Knex.Config } = {
   staging: {
     client: 'pg',
     connection: {
-      connectionString: process.env.DB_CONECTION,
+      connectionString: bd_conection,
     },
     pool: {
       min: 2,
@@ -34,7 +35,7 @@ export const config: { [key: string]: Knex.Config } = {
   production: {
     client: 'pg',
     connection: {
-      connectionString: process.env.DB_CONECTION,
+      connectionString: bd_conection,
     },
     pool: {
       min: 2,

@@ -1,14 +1,13 @@
 import dotenv from 'dotenv';
-import { obtenerUsuario } from '#login/login'
+import { obtenerUsuario } from '@login/login'
 import { verify, JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
+dotenv.config();
+const JWT_SECRET = process.env.JWT_SECRET || ''
+
 const verificarToken = async (token: string | undefined): Promise<JwtPayload | null> => {
   if (!token) return null;
-
-  dotenv.config();
-  const JWT_SECRET = process.env.JWT_SECRET || '';
-
   try {
     const decodedToken = verify(token, JWT_SECRET) as JwtPayload;
     const { cod_usuario } = decodedToken;
@@ -32,8 +31,7 @@ export async function middleware(req: Request, res: Response, next: NextFunction
     const decodedToken = await verificarToken(token);
 
     if (decodedToken) {
-      const usuario = await obtenerUsuario(decodedToken.cod_usuario, null);
-      req.usuario = usuario;
+      req.usuario = await obtenerUsuario(decodedToken.cod_usuario, null);
       return next();
     }
 
