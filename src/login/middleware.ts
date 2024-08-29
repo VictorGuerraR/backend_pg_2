@@ -1,33 +1,44 @@
+import dotenv from 'dotenv';
 import { obtenerUsuario } from '#login/login'
-import { decode, verify, JwtPayload } from 'jsonwebtoken'
+import { verify, JwtPayload } from 'jsonwebtoken';
+import { Request, Response, NextFunction } from 'express';
 
-const verificarToken = async (token: any): Promise<any> => {
-  if (!token) return false
+const verificarToken = async (token: string | undefined): Promise<JwtPayload | null> => {
+  if (!token) return null;
 
-  const decodedToken = decode(token);
+  dotenv.config();
+  const JWT_SECRET = process.env.JWT_SECRET || '';
 
-  if (decodedToken && typeof decodedToken !== 'string') {
-    const { cod_usuario } = decodedToken as JwtPayload;
+  try {
+    const decodedToken = verify(token, JWT_SECRET) as JwtPayload;
+    const { cod_usuario } = decodedToken;
+
     if (cod_usuario) {
-      const usuario = await obtenerUsuario(cod_usuario, null)
-
-      const valido = verify(token, usuario?.password)
-      if (valido) return valido
+      const usuario = await obtenerUsuario(cod_usuario, null);
+      if (usuario) {
+        return decodedToken;
+      }
     }
+  } catch (error) {
+    console.error('Token verification failed:', error);
   }
 
-  return false;
-}
+  return null;
+};
 
-export async function middleware(req: any, res: any, next: any): Promise<any> {
+export async function middleware(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const { cod_usuario } = await verificarToken(req.headers.token)
-    if (cod_usuario) {
-      req.usuario = await obtenerUsuario(cod_usuario, null)
-      return next()
+    const token = req.headers['authorization']?.split(' ')[1]; // Asume que el token está en el formato "Bearer TOKEN"
+    const decodedToken = await verificarToken(token);
+
+    if (decodedToken) {
+      const usuario = await obtenerUsuario(decodedToken.cod_usuario, null);
+      req.usuario = usuario;
+      return next();
     }
-    res.status(404).send();
+
+    res.status(401).send({ error: 'Token inválido o no proporcionado' });
   } catch (err) {
-    res.status(500).send()
+    res.status(500).send({ error: 'Error interno del servidor' });
   }
 }
