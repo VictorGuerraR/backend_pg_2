@@ -44,8 +44,8 @@ CREATE TABLE registros.materia_prima (
 
 CREATE TABLE registros.movimiento_materia_prima (
     cod_registro_materia_prima SERIAL PRIMARY KEY,
-    cod_materia_prima INT REFERENCES registros.materia_prima(cod_materia_prima),
-    cod_usuario_creacion INT REFERENCES registros.usuarios(cod_usuario),
+    cod_materia_prima INT REFERENCES registros.materia_prima(cod_materia_prima) not null,
+    cod_usuario_creacion INT REFERENCES registros.usuarios(cod_usuario) not null,
     fecha_creacion DATE DEFAULT CURRENT_DATE,
     cantidad NUMERIC(13, 2)
 );
@@ -53,9 +53,9 @@ CREATE TABLE registros.movimiento_materia_prima (
 -- Tabla herramienta
 CREATE TABLE registros.herramienta (
     cod_herramienta SERIAL PRIMARY KEY,
-    cod_tipo_depreciacion INT REFERENCES registros.porcentajes_depreciacion(cod_tipo_depreciacion),
-    cod_usuario_responsable int references registros.usuarios(cod_usuario),
-    cod_usuario_creacion int references registros.usuarios(cod_usuario),
+    cod_tipo_depreciacion INT REFERENCES registros.porcentajes_depreciacion(cod_tipo_depreciacion) not null,
+    cod_usuario_responsable int references registros.usuarios(cod_usuario) not null,
+    cod_usuario_creacion int references registros.usuarios(cod_usuario) not null,
     fecha_creacion DATE DEFAULT CURRENT_DATE,
     activo BOOLEAN not null default true,
     cod_usuario_anulacion int references registros.usuarios(cod_usuario),
@@ -63,54 +63,55 @@ CREATE TABLE registros.herramienta (
     descripcion VARCHAR(300),
     codigo_moneda VARCHAR(3) not null default 'GTQ',
     monto NUMERIC(13, 2),
-    consumo_electrico NUMERIC(13, 2)
+    consumo_electrico NUMERIC(13, 2),
+    codigo_medida_electricidad varchar(2) default 'kW'
 );
 
 -- Tabla maestro
 CREATE TABLE registros.maestro (
     cod_maestro SERIAL PRIMARY KEY,
-    cod_usuario_creacion int references registros.usuarios(cod_usuario),
+    cod_usuario_creacion int references registros.usuarios(cod_usuario) not null,
     fecha_creacion DATE DEFAULT CURRENT_DATE,
     activo BOOLEAN not null default true,
     cod_usuario_anulacion int references registros.usuarios(cod_usuario),
     fecha_anulacion date,
     codigo_moneda VARCHAR(3) not null default 'GTQ',
-    monto_total NUMERIC(13, 2),
-    porcentaje_impuesto NUMERIC(5, 2),
-    monto_impuesto NUMERIC(13, 2),
-    precio_kW NUMERIC(13, 2)
+    monto_total NUMERIC(13, 2) not null default 0,
+    porcentaje_impuesto NUMERIC(5, 2) not null default 5.00,
+    monto_impuesto NUMERIC(13, 2) not null default 0,
+    precio_kW NUMERIC(13, 2) not null default 1
 );
 
 -- Tabla detalle_bien
 CREATE TABLE registros.detalle_bien (
     cod_detalle_bien SERIAL PRIMARY KEY,
-    cod_materia_prima INT REFERENCES registros.materia_prima(cod_materia_prima),
-    cod_usuario_creacion int references registros.usuarios(cod_usuario),
+    cod_materia_prima INT REFERENCES registros.materia_prima(cod_materia_prima) not null,
+    cod_usuario_creacion int references registros.usuarios(cod_usuario) not null,
     fecha_creacion DATE DEFAULT CURRENT_DATE,
     activo BOOLEAN not null default true,
     cod_usuario_anulacion int references registros.usuarios(cod_usuario),
     fecha_anulacion date,
     codigo_moneda VARCHAR(3) not null default 'GTQ',
-    monto_total NUMERIC(13, 2),
-    codigo_unidad VARCHAR(2),
+    monto_total NUMERIC(13, 2) not null default 0,
+    codigo_unidad VARCHAR(1) not null default 'U',
     unidad NUMERIC(13, 2),
-    cod_detalle INT REFERENCES registros.maestro(cod_maestro)
+    cod_maestro INT REFERENCES registros.maestro(cod_maestro)  not null
 );
 
 -- Tabla detalle_servicio
 CREATE TABLE registros.detalle_servicio (
     cod_detalle_servicio SERIAL PRIMARY KEY,
-    cod_herramienta INT REFERENCES registros.herramienta(cod_herramienta),
-    cod_usuario_creacion int references registros.usuarios(cod_usuario),
+    cod_herramienta INT REFERENCES registros.herramienta(cod_herramienta) not null,
+    cod_usuario_creacion int references registros.usuarios(cod_usuario) not null,
     fecha_creacion DATE DEFAULT CURRENT_DATE,
     activo BOOLEAN not null default true,
     cod_usuario_anulacion int references registros.usuarios(cod_usuario),
     fecha_anulacion date,
     codigo_moneda VARCHAR(3) not null default 'GTQ',
     tiempo_uso NUMERIC(13, 2),
-    unidad NUMERIC(13, 2),
+    codigo_tiempo_uso varchar(1) not null default 'H',
     monto_total NUMERIC(13, 2),
-    cod_detalle INT REFERENCES registros.maestro(cod_maestro)
+    cod_maestro INT REFERENCES registros.maestro(cod_maestro) not null
 );
 
 
