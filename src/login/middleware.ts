@@ -24,7 +24,13 @@ const verificarToken = async (token: string | undefined): Promise<JwtPayload | n
 
 export async function middleware(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const decodedToken = await verificarToken(req.headers.token);
+    const token = Array.isArray(req.headers.token) ? req.headers.token[0] : req.headers.token;
+    if (!token) {
+      res.status(401).send('No token provided');
+      return
+    }
+
+    const decodedToken = await verificarToken(token);
 
     if (decodedToken) {
       req.usuario = await obtenerUsuario(decodedToken.user);
