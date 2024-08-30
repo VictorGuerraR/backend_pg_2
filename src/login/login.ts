@@ -35,26 +35,16 @@ export async function verificarExistenciaUsuario(cod_usuario: number): Promise<b
   return existe
 }
 
-export async function obtenerUsuario(usuario: string | null): Promise<Usuario | null> {
+export async function obtenerUsuario(usuario: string): Promise<Usuario | null> {
   if (!usuario) return null
 
-  const query = db('registros.usuarios')
-    .select(
-      'cod_usuario',
-      'fecha_creacion',
-      'nombres',
-      'apellidos',
-      'usuario',
-      'password',
-      'activo',
-    )
-    .first()
+  const record: Usuario = await db('registros.usuarios')
+    .select('cod_usuario', 'fecha_creacion', 'nombres', 'apellidos', 'usuario', 'password', 'activo',)
     .where('activo', true)
-    .where({ usuario });
+    .where({ usuario })
+    .first()
 
-  const result = await query;
-
-  return result;
+  return record;
 }
 
 async function generarToken(username: string, plainTextPassword: string): Promise<string | null> {
@@ -62,9 +52,7 @@ async function generarToken(username: string, plainTextPassword: string): Promis
   if (!userRecord) return null
 
   const { cod_usuario: userId, usuario: user, password: hashedPassword } = userRecord;
-
-  const isPasswordValid = await bcrypt.compare(plainTextPassword, hashedPassword);
-  if (isPasswordValid) {
+  if (await bcrypt.compare(plainTextPassword, hashedPassword)) {
     const token = jwt.sign({ userId, user }, JWT_SECRET, { expiresIn });
     return token;
   }
@@ -72,14 +60,17 @@ async function generarToken(username: string, plainTextPassword: string): Promis
   return null;
 }
 
-
 export async function token(req: Request, res: Response): Promise<any> {
   try {
     const { usuario, password } = req.body
     const token = await generarToken(usuario, password)
-    res.status(200).json({ token })
-  } catch (err) {
-    res.status(500).json()
+    if (token) {
+      res.status(200).json({ token })
+    } else {
+      res.status(401).json({ error: { usuario: 'No se encontro usuario activo' } })
+    }
+  } catch (error) {
+    res.status(500).json({ error })
   }
 }
 
@@ -92,7 +83,7 @@ export async function creacion(req: Request, res: Response) {
       usuario.usuario = `${usuario.nombres.replace(/\s+/g, '').toLowerCase()}.${usuario.apellidos.replace(/\s+/g, '').toLowerCase()}`
       respuesta = await trx('registros.usuarios')
         .insert(usuario)
-        .returning('*')
+        .returning('cod_usuario')
     })
     res.status(200).json({ respuesta })
   } catch (error) {
@@ -102,12 +93,16 @@ export async function creacion(req: Request, res: Response) {
 
 export async function actualizacion(req: Request, res: Response) {
   try {
+    let respuesta
     const { cod_usuario, ...usuario }: Actualizacion = actualizacionUsuario.parse(req.body)
     await db.transaction(async (trx) => {
-      await trx('registros.usuarios')
+      usuario.password = await bcrypt.hash(usuario.password, 10)
+      respuesta = await trx('registros.usuarios')
         .update(usuario)
         .where({ cod_usuario })
+        .returning('cod_usuario')
     })
+    res.status(200).json({ respuesta })
   } catch (error) {
     res.status(500).json({ error })
   }
@@ -115,12 +110,15 @@ export async function actualizacion(req: Request, res: Response) {
 
 export async function deshabilitar(req: Request, res: Response) {
   try {
+    let respuesta
     const { cod_usuario, ...usuario }: Desactivacion = desactivacionUsuario.parse(req.body)
     await db.transaction(async (trx) => {
-      await trx('registros.usuarios')
+      respuesta = await trx('registros.usuarios')
         .update(usuario)
         .where({ cod_usuario })
+        .returning('cod_usuario')
     })
+    res.status(200).json({ respuesta })
   } catch (error) {
     res.status(500).json({ error })
   }

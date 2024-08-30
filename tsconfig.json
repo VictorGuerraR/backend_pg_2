@@ -31,8 +31,14 @@
       "#conexion": [
         "src/db/db.ts"
       ],
+      "#materiasPrimas/*": [
+        "src/materias-primas/*"
+      ],
       "#herramientas/*": [
         "src/herramientas/*"
+      ],
+      "#tools/*": [
+        "src/tools/*"
       ],
       "#inventario/*": [
         "src/inventario/*"

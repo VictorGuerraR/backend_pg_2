@@ -30,7 +30,6 @@ export const creacionHerramienta = z.object({
 // Define el esquema para actualizacionHerramienta
 export const actualizacionHerramienta = z.object({
   cod_herramienta: z.number(),
-  cod_usuario_responsable: z.number(),
   cod_tipo_depreciacion: z.number(),
   descripcion: z.string(),
   monto: z.number(),
@@ -45,6 +44,6 @@ export const desactivacionHerramienta = z.object({
   fecha_anulacion: z.date().default(() => new Date()),
 });
 
-export type CreacionHerramienta = z.infer<typeof creacionHerramienta>;
-export type ActualizacionHerramienta = z.infer<typeof actualizacionHerramienta>;
-export type DesactivacionHerramienta = z.infer<typeof desactivacionHerramienta>;
+export type CreacionH = z.infer<typeof creacionHerramienta>;
+export type ActualizacionH = z.infer<typeof actualizacionHerramienta>;
+export type DesactivacionH = z.infer<typeof desactivacionHerramienta>;

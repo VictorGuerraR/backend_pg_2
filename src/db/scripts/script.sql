@@ -94,7 +94,7 @@ CREATE TABLE registros.detalle_bien (
     monto_total NUMERIC(13, 2),
     codigo_unidad VARCHAR(2),
     unidad NUMERIC(13, 2),
-    cod_detalle INT REFERENCES registros.maestro(cod_detalle)
+    cod_detalle INT REFERENCES registros.maestro(cod_maestro)
 );
 
 -- Tabla detalle_servicio
@@ -110,7 +110,7 @@ CREATE TABLE registros.detalle_servicio (
     tiempo_uso NUMERIC(13, 2),
     unidad NUMERIC(13, 2),
     monto_total NUMERIC(13, 2),
-    cod_detalle INT REFERENCES registros.maestro(cod_detalle)
+    cod_detalle INT REFERENCES registros.maestro(cod_maestro)
 );
 
 
