@@ -17,10 +17,26 @@ dotenv.config();
 const expiresIn = process.env.JWT_EXPIRATION || '12h'
 const JWT_SECRET = process.env.JWT_SECRET || ''
 
-export async function obtenerUsuario(cod_usuario: number | null, usuario: string | null): Promise<Usuario | null> {
-  if (!cod_usuario && !usuario) {
-    return null; // Devuelve null o lanza un error si ambos son nulos
-  }
+export async function verificarExistenciaUsuario(cod_usuario: number): Promise<boolean | null> {
+  if (!cod_usuario) return null
+  const { existe } = await db('registros.usuarios')
+    .select({
+      existe: db.raw(`
+      case
+        when count(*) > 0 then true
+        else false
+      end
+      `)
+    })
+    .first()
+    .where('activo', true)
+    .where({ cod_usuario })
+
+  return existe
+}
+
+export async function obtenerUsuario(usuario: string | null): Promise<Usuario | null> {
+  if (!usuario) return null
 
   const query = db('registros.usuarios')
     .select(
@@ -33,32 +49,29 @@ export async function obtenerUsuario(cod_usuario: number | null, usuario: string
       'activo',
     )
     .first()
-    .where('activo', true);
+    .where('activo', true)
+    .where({ usuario });
 
-  if (cod_usuario) {
-    query.where({ cod_usuario });
-  } else if (usuario) {
-    query.where({ usuario });
-  }
+  const result = await query;
 
-  return await query;
+  return result;
 }
 
-async function generarToken(usuario: string, pass: string): Promise<string | null> {
-  const usuarioData = await obtenerUsuario(null, usuario);
+async function generarToken(username: string, plainTextPassword: string): Promise<string | null> {
+  const userRecord = await obtenerUsuario(username);
+  if (!userRecord) return null
 
-  if (!usuarioData) { return null }
+  const { cod_usuario: userId, usuario: user, password: hashedPassword } = userRecord;
 
-  const { cod_usuario, password } = usuarioData;
-
-  const passwordMatch = await bcrypt.compare(pass, password);
-  if (passwordMatch) {
-    const token = jwt.sign({ cod_usuario }, JWT_SECRET, { expiresIn });
+  const isPasswordValid = await bcrypt.compare(plainTextPassword, hashedPassword);
+  if (isPasswordValid) {
+    const token = jwt.sign({ userId, user }, JWT_SECRET, { expiresIn });
     return token;
   }
 
   return null;
 }
+
 
 export async function token(req: Request, res: Response): Promise<any> {
   try {
@@ -73,7 +86,6 @@ export async function token(req: Request, res: Response): Promise<any> {
 export async function creacion(req: Request, res: Response) {
   try {
     let respuesta
-    console.log(req.body)
     const usuario: Creacion = creacionUsuario.parse(req.body)
     await db.transaction(async (trx) => {
       usuario.password = await bcrypt.hash(usuario.password, 10)

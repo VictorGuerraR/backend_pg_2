@@ -7,7 +7,7 @@ create table registros.usuarios(
     nombres VARCHAR NOT null,
     apellidos VARCHAR NOT null,
     usuario VARCHAR NOT null,
-    "password" CHAR(64) NOT null,
+    "password" VARCHAR NOT null,
     activo boolean not null default true,
     fecha_inactivacion date
 );

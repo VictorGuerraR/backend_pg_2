@@ -11,7 +11,7 @@ export async function up(knex: Knex): Promise<void> {
     table.string('nombres').notNullable();
     table.string('apellidos').notNullable();
     table.string('usuario').notNullable();
-    table.string('password', 64).notNullable();
+    table.string('password').notNullable();
     table.boolean('activo').notNullable().defaultTo(true);
     table.date('fecha_inactivacion');
   });

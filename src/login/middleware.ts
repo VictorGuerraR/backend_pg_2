@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { obtenerUsuario } from '@login/login'
+import { obtenerUsuario, verificarExistenciaUsuario } from '#login/login'
 import { verify, JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
@@ -10,13 +10,10 @@ const verificarToken = async (token: string | undefined): Promise<JwtPayload | n
   if (!token) return null;
   try {
     const decodedToken = verify(token, JWT_SECRET) as JwtPayload;
-    const { cod_usuario } = decodedToken;
+    const { userId } = decodedToken;
 
-    if (cod_usuario) {
-      const usuario = await obtenerUsuario(cod_usuario, null);
-      if (usuario) {
-        return decodedToken;
-      }
+    if (userId && await verificarExistenciaUsuario(userId)) {
+      return decodedToken;
     }
   } catch (error) {
     console.error('Token verification failed:', error);
@@ -27,11 +24,10 @@ const verificarToken = async (token: string | undefined): Promise<JwtPayload | n
 
 export async function middleware(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const token = req.headers['authorization']?.split(' ')[1]; // Asume que el token está en el formato "Bearer TOKEN"
-    const decodedToken = await verificarToken(token);
+    const decodedToken = await verificarToken(req.headers.token);
 
     if (decodedToken) {
-      req.usuario = await obtenerUsuario(decodedToken.cod_usuario, null);
+      req.usuario = await obtenerUsuario(decodedToken.user);
       return next();
     }
 
