@@ -8,4 +8,4 @@ export const creacionMovimientoMateriaPrima = z.object({
   cantidad: z.number()
 })
 
-export type MovimientoMateriaPrima = z.infer<typeof creacionMovimientoMateriaPrima>
+export type MovimientoMP = z.infer<typeof creacionMovimientoMateriaPrima>

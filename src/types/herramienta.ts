@@ -11,6 +11,7 @@ export type Herramienta = {
   consumo_electrico: number;
   descripcion: string;
   fecha_anulacion: Date | null;
+  fecha_adquisicion: Date | null;
   fecha_creacion: Date;
   monto: number;
 }
@@ -23,6 +24,7 @@ export const creacionHerramienta = z.object({
   consumo_electrico: z.number(),
   descripcion: z.string(),
   fecha_creacion: z.date().default(() => new Date()),
+  fecha_adquisicion: z.date().default(() => new Date()),
   monto: z.number(),
 });
 
@@ -31,6 +33,7 @@ export const actualizacionHerramienta = z.object({
   cod_tipo_depreciacion: z.number(),
   consumo_electrico: z.number(),
   descripcion: z.string(),
+  fecha_adquisicion: z.date(),
   monto: z.number(),
 });
 

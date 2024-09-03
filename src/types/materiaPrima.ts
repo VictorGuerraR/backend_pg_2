@@ -12,4 +12,4 @@ export const creacionMateriaPrima = z.object({
   codigo_unidad: z.string(),
 });
 
-export type CreacionMateriaPrima = z.infer<typeof creacionMateriaPrima>;
+export type CreacionMP = z.infer<typeof creacionMateriaPrima>;

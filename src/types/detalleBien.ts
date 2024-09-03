@@ -36,5 +36,5 @@ export const desactivacionDetalleBien = z.object({
 });
 
 // Inferir los tipos desde los esquemas si es necesario
-export type CreacionDetalleBien = z.infer<typeof creacionDetalleBien>;
-export type DesactivacionDetalleBien = z.infer<typeof desactivacionDetalleBien>;
+export type CreacionDB = z.infer<typeof creacionDetalleBien>;
+export type DesactivacionDB = z.infer<typeof desactivacionDetalleBien>;

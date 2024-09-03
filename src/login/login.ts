@@ -5,9 +5,9 @@ import jwt from 'jsonwebtoken'
 import { Request, Response } from 'express';
 import {
   Usuario,
-  Creacion,
-  Actualizacion,
-  Desactivacion,
+  CreacionU,
+  ActualizacionU,
+  DesactivacionU,
   creacionUsuario,
   actualizacionUsuario,
   desactivacionUsuario
@@ -77,7 +77,7 @@ export async function token(req: Request, res: Response): Promise<any> {
 export async function creacion(req: Request, res: Response) {
   try {
     let respuesta
-    const usuario: Creacion = creacionUsuario.parse(req.body)
+    const usuario: CreacionU = creacionUsuario.parse(req.body)
     await db.transaction(async (trx) => {
       usuario.password = await bcrypt.hash(usuario.password, 10)
       usuario.usuario = `${usuario.nombres.replace(/\s+/g, '').toLowerCase()}.${usuario.apellidos.replace(/\s+/g, '').toLowerCase()}`
@@ -94,7 +94,7 @@ export async function creacion(req: Request, res: Response) {
 export async function actualizacion(req: Request, res: Response) {
   try {
     let respuesta
-    const { cod_usuario, ...usuario }: Actualizacion = actualizacionUsuario.parse(req.body)
+    const { cod_usuario, ...usuario }: ActualizacionU = actualizacionUsuario.parse(req.body)
     await db.transaction(async (trx) => {
       usuario.password = await bcrypt.hash(usuario.password, 10)
       respuesta = await trx('registros.usuarios')
@@ -111,7 +111,7 @@ export async function actualizacion(req: Request, res: Response) {
 export async function deshabilitar(req: Request, res: Response) {
   try {
     let respuesta
-    const { cod_usuario, ...usuario }: Desactivacion = desactivacionUsuario.parse(req.body)
+    const { cod_usuario, ...usuario }: DesactivacionU = desactivacionUsuario.parse(req.body)
     await db.transaction(async (trx) => {
       respuesta = await trx('registros.usuarios')
         .update(usuario)

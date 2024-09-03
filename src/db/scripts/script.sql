@@ -69,6 +69,7 @@ CREATE TABLE registros.herramienta (
     cod_usuario_responsable int references registros.usuarios(cod_usuario) not null,
     cod_usuario_creacion int references registros.usuarios(cod_usuario) not null,
     fecha_creacion DATE DEFAULT CURRENT_DATE,
+    fecha_adquisicion DATE DEFAULT CURRENT_DATE
     activo BOOLEAN not null default true,
     cod_usuario_anulacion int references registros.usuarios(cod_usuario),
     fecha_anulacion date,

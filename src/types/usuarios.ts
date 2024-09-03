@@ -33,6 +33,6 @@ export const desactivacionUsuario = z.object({
   fecha_inactivacion: z.date().default(() => new Date()),
 });
 
-export type Creacion = z.infer<typeof creacionUsuario>;
-export type Actualizacion = z.infer<typeof actualizacionUsuario>;
-export type Desactivacion = z.infer<typeof desactivacionUsuario>;
+export type CreacionU = z.infer<typeof creacionUsuario>;
+export type ActualizacionU = z.infer<typeof actualizacionUsuario>;
+export type DesactivacionU = z.infer<typeof desactivacionUsuario>;

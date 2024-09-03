@@ -66,6 +66,7 @@ export async function up(knex: Knex): Promise<void> {
     table.integer('cod_usuario_responsable').notNullable().references('cod_usuario').inTable('registros.usuarios');
     table.integer('cod_usuario_creacion').notNullable().references('cod_usuario').inTable('registros.usuarios');
     table.date('fecha_creacion').defaultTo(knex.fn.now());
+    table.date('fecha_adquisicion').defaultTo(knex.fn.now());
     table.boolean('activo').notNullable().defaultTo(true);
     table.integer('cod_usuario_anulacion').references('cod_usuario').inTable('registros.usuarios');
     table.date('fecha_anulacion');
