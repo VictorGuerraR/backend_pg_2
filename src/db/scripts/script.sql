@@ -12,6 +12,17 @@ create table registros.usuarios(
     fecha_inactivacion date
 );
 
+CREATE TABLE costo_fijos (
+    cod_costo_fijo SERIAL PRIMARY KEY,
+    cod_usuario_creacion INT REFERENCES usuarios(cod_usuario),
+    fecha_creacion DATE DEFAULT CURRENT_DATE,
+    activo BOOLEAN DEFAULT true NOT NULL,
+    cod_usuario_anulacion INT REFERENCES usuarios(cod_usuario),
+    fecha_anulacion DATE,
+    codigo_moneda VARCHAR(3) DEFAULT 'GTQ' NOT NULL,
+    monto_total NUMERIC(13, 2)
+);
+
 -- Tabla porcentajes_depreciacion
 CREATE TABLE registros.porcentajes_depreciacion (
     cod_tipo_depreciacion SERIAL PRIMARY KEY,
@@ -21,7 +32,6 @@ CREATE TABLE registros.porcentajes_depreciacion (
 
 -- Insertar información en la tabla porcentajes_depreciacion
 INSERT INTO registros.porcentajes_depreciacion (descripcion, porcentaje_depreciacion_anual) VALUES
-('Edificios, construcciones e instalaciones adheridas a los inmuebles y sus mejoras', 5.00),
 ('Árboles, arbustos, frutales y especies vegetales que produzcan frutos o productos que generen rentas gravadas, incluidos los gastos capitalizables para formar las plantaciones', 15.00),
 ('Instalaciones no adheridas a los inmuebles, mobiliario y equipo de oficina, buques - tanques, barcos y material ferroviario, marítimo, fluvial o lacustre', 20.00),
 ('Los semovientes utilizados como animales de carga o de trabajo, maquinaria, vehículos en general, grúas, aviones, remolques, semirremolques, contenedores y material rodante de todo tipo, excluido el ferroviario', 20.00),
@@ -46,6 +56,8 @@ CREATE TABLE registros.movimiento_materia_prima (
     cod_registro_materia_prima SERIAL PRIMARY KEY,
     cod_materia_prima INT REFERENCES registros.materia_prima(cod_materia_prima) not null,
     cod_usuario_creacion INT REFERENCES registros.usuarios(cod_usuario) not null,
+    cod_usuario_anulacion int references registros.usuarios(cod_usuario),
+    fecha_anulacion date,
     fecha_creacion DATE DEFAULT CURRENT_DATE,
     cantidad NUMERIC(13, 2)
 );
@@ -79,7 +91,9 @@ CREATE TABLE registros.maestro (
     monto_total NUMERIC(13, 2) not null default 0,
     porcentaje_impuesto NUMERIC(5, 2) not null default 5.00,
     monto_impuesto NUMERIC(13, 2) not null default 0,
-    precio_kW NUMERIC(13, 2) not null default 1
+    precio_kW NUMERIC(13, 2) not null default 1,
+    monto_ganacia NUMERIC(13, 2),
+    porcentaje_ganancia NUMERIC(5, 2)
 );
 
 -- Tabla detalle_bien

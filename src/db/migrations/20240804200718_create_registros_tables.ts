@@ -16,6 +16,19 @@ export async function up(knex: Knex): Promise<void> {
     table.date('fecha_inactivacion');
   });
 
+  // Tabla costo_fijos
+  await knex.schema.withSchema('registros').createTable('costo_fijos', (table) => {
+    table.increments('cod_costo_fijo').primary();
+    table.integer('cod_usuario_creacion').references('cod_usuario').inTable('registros.usuarios');
+    table.date('fecha_creacion').defaultTo(knex.fn.now());
+    table.boolean('activo').notNullable().defaultTo(true);
+    table.integer('cod_usuario_anulacion').references('cod_usuario').inTable('registros.usuarios');
+    table.date('fecha_anulacion');
+    table.string('descripcion').notNullable();
+    table.string('codigo_moneda', 3).notNullable().defaultTo('GTQ');
+    table.decimal('monto_total', 13, 2);
+  });
+
   // Tabla porcentajes_depreciacion
   await knex.schema.withSchema('registros').createTable('porcentajes_depreciacion', (table) => {
     table.increments('cod_tipo_depreciacion').primary();
@@ -45,6 +58,8 @@ export async function up(knex: Knex): Promise<void> {
     table.decimal('monto', 13, 2);
     table.decimal('cantidad', 13, 2);
     table.string('codigo_unidad', 2);
+    table.integer('cod_usuario_anulacion').references('cod_usuario').inTable('registros.usuarios');
+    table.date('fecha_anulacion');
   });
 
   // Tabla movimiento_materia_prima
@@ -86,6 +101,8 @@ export async function up(knex: Knex): Promise<void> {
     table.decimal('porcentaje_impuesto', 5, 2).notNullable().defaultTo(5.00);
     table.decimal('monto_impuesto', 13, 2).notNullable().defaultTo(0);
     table.decimal('precio_kW', 13, 2).notNullable().defaultTo(1);
+    table.decimal('monto_ganacia', 13, 2);
+    table.decimal('porcentaje_ganancia', 5, 2);
   });
 
   // Tabla detalle_bien
@@ -128,6 +145,7 @@ export async function down(knex: Knex): Promise<void> {
   await knex.schema.withSchema('registros').dropTableIfExists('maestro');
   await knex.schema.withSchema('registros').dropTableIfExists('herramienta');
   await knex.schema.withSchema('registros').dropTableIfExists('materia_prima');
+  await knex.schema.withSchema('registros').dropTableIfExists('porcentajes_depreciacion');
   await knex.schema.withSchema('registros').dropTableIfExists('porcentajes_depreciacion');
   await knex.schema.withSchema('registros').dropTableIfExists('usuarios');
 
