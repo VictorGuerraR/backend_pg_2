@@ -36,18 +36,6 @@ export async function up(knex: Knex): Promise<void> {
     table.decimal('porcentaje_depreciacion_anual', 5, 2).notNullable();
   });
 
-  // Insertar datos en porcentajes_depreciacion
-  await knex('registros.porcentajes_depreciacion').insert([
-    { descripcion: 'Edificios, construcciones e instalaciones adheridas a los inmuebles y sus mejoras', porcentaje_depreciacion_anual: 5.00 },
-    { descripcion: 'Árboles, arbustos, frutales y especies vegetales que produzcan frutos o productos que generen rentas gravadas, incluidos los gastos capitalizables para formar las plantaciones', porcentaje_depreciacion_anual: 15.00 },
-    { descripcion: 'Instalaciones no adheridas a los inmuebles, mobiliario y equipo de oficina, buques - tanques, barcos y material ferroviario, marítimo, fluvial o lacustre', porcentaje_depreciacion_anual: 20.00 },
-    { descripcion: 'Los semovientes utilizados como animales de carga o de trabajo, maquinaria, vehículos en general, grúas, aviones, remolques, semirremolques, contenedores y material rodante de todo tipo, excluido el ferroviario', porcentaje_depreciacion_anual: 20.00 },
-    { descripcion: 'Equipo de computación', porcentaje_depreciacion_anual: 33.33 },
-    { descripcion: 'Herramientas, porcelana, cristalería, mantelería, cubiertos y similares', porcentaje_depreciacion_anual: 25.00 },
-    { descripcion: 'Reproductores de raza, machos y hembras, la depreciación se calcula sobre el valor de costo de tales animales menos su valor como ganado común', porcentaje_depreciacion_anual: 25.00 },
-    { descripcion: 'Para los bienes muebles no indicados en los incisos anteriores', porcentaje_depreciacion_anual: 10.00 },
-  ]);
-
   // Tabla materia_prima
   await knex.schema.withSchema('registros').createTable('materia_prima', (table) => {
     table.increments('cod_materia_prima').primary();
@@ -136,6 +124,18 @@ export async function up(knex: Knex): Promise<void> {
     table.decimal('monto_total', 13, 2);
     table.integer('cod_maestro').notNullable().references('cod_maestro').inTable('registros.maestro');
   });
+
+  // Insertar datos en porcentajes_depreciacion
+  await knex('registros.porcentajes_depreciacion').insert([
+    { descripcion: 'Edificios, construcciones e instalaciones adheridas a los inmuebles y sus mejoras', porcentaje_depreciacion_anual: 5.00 },
+    { descripcion: 'Árboles, arbustos, frutales y especies vegetales que produzcan frutos o productos que generen rentas gravadas, incluidos los gastos capitalizables para formar las plantaciones', porcentaje_depreciacion_anual: 15.00 },
+    { descripcion: 'Instalaciones no adheridas a los inmuebles, mobiliario y equipo de oficina, buques - tanques, barcos y material ferroviario, marítimo, fluvial o lacustre', porcentaje_depreciacion_anual: 20.00 },
+    { descripcion: 'Los semovientes utilizados como animales de carga o de trabajo, maquinaria, vehículos en general, grúas, aviones, remolques, semirremolques, contenedores y material rodante de todo tipo, excluido el ferroviario', porcentaje_depreciacion_anual: 20.00 },
+    { descripcion: 'Equipo de computación', porcentaje_depreciacion_anual: 33.33 },
+    { descripcion: 'Herramientas, porcelana, cristalería, mantelería, cubiertos y similares', porcentaje_depreciacion_anual: 25.00 },
+    { descripcion: 'Reproductores de raza, machos y hembras, la depreciación se calcula sobre el valor de costo de tales animales menos su valor como ganado común', porcentaje_depreciacion_anual: 25.00 },
+    { descripcion: 'Para los bienes muebles no indicados en los incisos anteriores', porcentaje_depreciacion_anual: 10.00 },
+  ]);
 }
 
 export async function down(knex: Knex): Promise<void> {
