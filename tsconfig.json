@@ -32,7 +32,7 @@
         "src/db/db.ts"
       ],
       "#materiasPrimas/*": [
-        "src/materias-primas/*"
+        "src/materia-prima/*"
       ],
       "#herramientas/*": [
         "src/herramientas/*"

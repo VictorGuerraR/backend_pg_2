@@ -42,10 +42,10 @@ function whereHerramientas(params: any, query: Knex.QueryBuilder, prefix: string
 }
 
 const consultaHerramientas = () => db({ h: 'registros.herramienta' })
-  .innerJoin({ pd: 'porcentajes_depreciacion' }, 'h.cod_tipo_depreciacion', 'pd.cod_tipo_depreciacion')
-  .innerJoin({ ur: 'usuarios' }, 'ur.cod_usuario', 'h.cod_usuario_responsable')
-  .innerJoin({ uc: 'usuarios' }, 'uc.cod_usuario', 'h.cod_usuario_creacion')
-  .leftJoin({ ds: 'detalle_servicio' }, 'ds.cod_herramienta', 'h.cod_herramienta')
+  .innerJoin({ pd: 'registros.porcentajes_depreciacion' }, 'h.cod_tipo_depreciacion', 'pd.cod_tipo_depreciacion')
+  .innerJoin({ ur: 'registros.usuarios' }, 'ur.cod_usuario', 'h.cod_usuario_responsable')
+  .innerJoin({ uc: 'registros.usuarios' }, 'uc.cod_usuario', 'h.cod_usuario_creacion')
+  .leftJoin({ ds: 'registros.detalle_servicio' }, 'ds.cod_herramienta', 'h.cod_herramienta')
   .select(
     'h.cod_herramienta',
     'ds.tiempo_uso',
@@ -79,10 +79,10 @@ export async function obtenerHerramientas(req: Request, res: Response) {
     const resultado: Herramienta[] = await whereHerramientas(req.query, consultaHerramientas(), 'h')
     res.status(200).json({ resultado })
   } catch (error) {
+    console.log(error)
     res.status(404).json({ error })
   }
 }
-
 
 export async function crearHerramienta(req: Request, res: Response) {
   try {

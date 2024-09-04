@@ -45,6 +45,9 @@ CREATE TABLE registros.materia_prima (
     cod_materia_prima SERIAL PRIMARY KEY,
     cod_usuario_creacion int references registros.usuarios(cod_usuario),
     fecha_creacion DATE DEFAULT CURRENT_DATE,
+    cod_usuario_anulacion int references registros.usuarios(cod_usuario),
+    activo BOOLEAN not null default true,
+    fecha_anulacion date,
     descripcion VARCHAR(300),
     codigo_moneda VARCHAR(3) not null default 'GTQ',
     monto NUMERIC(13, 2),
@@ -56,8 +59,6 @@ CREATE TABLE registros.movimiento_materia_prima (
     cod_registro_materia_prima SERIAL PRIMARY KEY,
     cod_materia_prima INT REFERENCES registros.materia_prima(cod_materia_prima) not null,
     cod_usuario_creacion INT REFERENCES registros.usuarios(cod_usuario) not null,
-    cod_usuario_anulacion int references registros.usuarios(cod_usuario),
-    fecha_anulacion date,
     fecha_creacion DATE DEFAULT CURRENT_DATE,
     cantidad NUMERIC(13, 2)
 );
@@ -69,7 +70,7 @@ CREATE TABLE registros.herramienta (
     cod_usuario_responsable int references registros.usuarios(cod_usuario) not null,
     cod_usuario_creacion int references registros.usuarios(cod_usuario) not null,
     fecha_creacion DATE DEFAULT CURRENT_DATE,
-    fecha_adquisicion DATE DEFAULT CURRENT_DATE
+    fecha_adquisicion DATE DEFAULT CURRENT_DATE,
     activo BOOLEAN not null default true,
     cod_usuario_anulacion int references registros.usuarios(cod_usuario),
     fecha_anulacion date,
