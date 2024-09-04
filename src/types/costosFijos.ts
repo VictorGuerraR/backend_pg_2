@@ -13,7 +13,6 @@ export type CostoFijo = {
 }
 
 export const creacionCostoFijo = z.object({
-  cod_costo_fijo: z.number(),
   cod_usuario_creacion: z.number(),
   descripcion: z.string(),
   fecha_creacion: z.date().default(() => new Date()),
