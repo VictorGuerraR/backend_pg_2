@@ -9,7 +9,7 @@ export const creacionMateriaPrima = z.object({
   monto: z.number(),
   activo: z.boolean().default(true),
   cantidad: z.number(),
-  codigo_unidad: z.string(),
+  codigo_unidad: z.string().default('KG'),
 });
 
 // Define el esquema para creacionMateriaPrima

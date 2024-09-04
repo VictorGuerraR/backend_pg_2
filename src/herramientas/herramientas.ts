@@ -79,7 +79,6 @@ export async function obtenerHerramientas(req: Request, res: Response) {
     const resultado: Herramienta[] = await whereHerramientas(req.query, consultaHerramientas(), 'h')
     res.status(200).json({ resultado })
   } catch (error) {
-    console.log(error)
     res.status(404).json({ error })
   }
 }

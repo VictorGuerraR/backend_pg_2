@@ -7,6 +7,7 @@ export type CostoFijo = {
   activo: boolean;
   cod_usuario_anulacion?: number;
   fecha_anulacion?: Date;
+  descripcion: string;
   codigo_moneda: string;
   monto_total?: number;
 }
@@ -14,6 +15,7 @@ export type CostoFijo = {
 export const creacionCostoFijo = z.object({
   cod_costo_fijo: z.number(),
   cod_usuario_creacion: z.number(),
+  descripcion: z.string(),
   fecha_creacion: z.date().default(() => new Date()),
   activo: z.boolean().default(true),
   codigo_moneda: z.string().default('GTQ'),
@@ -22,6 +24,7 @@ export const creacionCostoFijo = z.object({
 
 export const actualizacionCostoFijo = z.object({
   cod_costo_fijo: z.number(),
+  descripcion: z.string(),
   monto_total: z.number().default(0)
 })
 

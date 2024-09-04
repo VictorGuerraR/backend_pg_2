@@ -22,7 +22,7 @@ export const creacionDetalleBien = z.object({
   fecha_creacion: z.date().default(() => new Date()),
   activo: z.boolean().default(true),
   monto_total: z.number(),
-  codigo_unidad: z.string(),
+  codigo_unidad: z.string().default('KG'),
   unidad: z.number(),
   cod_detalle: z.number(),
 });

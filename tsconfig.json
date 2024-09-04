@@ -31,14 +31,11 @@
       "#conexion": [
         "src/db/db.ts"
       ],
-      "#materiasPrimas/*": [
-        "src/materia-prima/*"
+      "#costosFijos/*": [
+        "src/costos-fijos/*"
       ],
       "#herramientas/*": [
         "src/herramientas/*"
-      ],
-      "#tools/*": [
-        "src/tools/*"
       ],
       "#inventario/*": [
         "src/inventario/*"
@@ -46,11 +43,17 @@
       "#login/*": [
         "src/login/*"
       ],
-      "#registros/*": [
-        "src/registros/*"
+      "#materiasPrimas/*": [
+        "src/materia-prima/*"
       ],
       "#middleware": [
         "src/login/middleware.ts"
+      ],
+      "#registros/*": [
+        "src/registros/*"
+      ],
+      "#tools/*": [
+        "src/tools/*"
       ],
       "#types/*": [
         "src/types/*"

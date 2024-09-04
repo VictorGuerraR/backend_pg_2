@@ -39,7 +39,7 @@ function whereMateriasPrimas(params: any, query: Knex.QueryBuilder, prefix: stri
   return query
 }
 
-const query = () => db({ mp: 'registros.materia_prima' })
+const consultaMateriasPrimas = () => db({ mp: 'registros.materia_prima' })
   .innerJoin({ uc: 'registros.usuarios' }, 'mp.cod_usuario_creacion', 'uc.cod_usuario')
   .leftJoin({ mmp: 'registros.movimiento_materia_prima' }, 'mmp.cod_materia_prima', 'mp.cod_materia_prima')
   .select(
@@ -64,11 +64,10 @@ const query = () => db({ mp: 'registros.materia_prima' })
 
 export async function obtenerMateriasPrimas(req: Request, res: Response) {
   try {
-    const respuesta = await whereMateriasPrimas(req.query, query(), 'mp')
+    const respuesta = await whereMateriasPrimas(req.query, consultaMateriasPrimas(), 'mp')
     res.status(200).json({ respuesta })
   } catch (error) {
-    console.log(error)
-    res.status(500).json({ error })
+    res.status(404).json({ error })
   }
 }
 
@@ -94,8 +93,7 @@ export async function crearMateriaPrima(req: Request, res: Response) {
 export async function actualizarMateriaPrima(req: Request, res: Response) {
   try {
     let respuesta
-    const { cod_materia_prima, ...materiPrima }: ActualizacionMP = actualizacionMateriaPrima
-      .parse(req.body)
+    const { cod_materia_prima, ...materiPrima }: ActualizacionMP = actualizacionMateriaPrima.parse(req.body)
     await db.transaction(async (trx) => {
       respuesta = await trx('registros.materia_prima')
         .update(materiPrima)
@@ -122,6 +120,7 @@ export async function desactivarMateriaPrima(req: Request, res: Response) {
         .where({ cod_materia_prima })
         .returning('cod_materia_prima')
     })
+    res.status(200).json({ respuesta })
   } catch (error) {
     res.status(500).json({ error })
   }
