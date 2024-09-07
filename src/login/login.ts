@@ -70,6 +70,7 @@ export async function token(req: Request, res: Response): Promise<any> {
       res.status(401).json({ error: { usuario: 'No se encontro usuario activo' } })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error })
   }
 }
@@ -87,6 +88,7 @@ export async function creacion(req: Request, res: Response) {
     })
     res.status(200).json({ respuesta })
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error })
   }
 }
@@ -104,6 +106,7 @@ export async function actualizacion(req: Request, res: Response) {
     })
     res.status(200).json({ respuesta })
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error })
   }
 }
@@ -120,6 +123,7 @@ export async function deshabilitar(req: Request, res: Response) {
     })
     res.status(200).json({ respuesta })
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error })
   }
 }

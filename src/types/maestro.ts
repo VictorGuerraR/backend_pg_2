@@ -11,7 +11,7 @@ export type Maestro = {
   monto_total?: number;
   porcentaje_impuesto?: number;
   monto_impuesto?: number;
-  precio_kW?: number;
+  precio_kw?: number;
   monto_ganacia?: number;
   porcentaje_ganacia?: number;
 }
@@ -21,11 +21,11 @@ export const creacionMaestro = z.object({
   fecha_creacion: z.date().default(() => new Date()),
   activo: z.boolean().default(true),
   monto_total: z.number(),
-  porcentaje_impuesto: z.number().default(0),
+  porcentaje_impuesto: z.number().default(5),
   monto_impuesto: z.number().default(0),
-  precio_kW: z.number().default(1),
-  monto_ganacia: z.number().default(0),
-  porcentaje_ganacia: z.number().default(0)
+  precio_kw: z.number().default(1),
+  monto_ganacia: z.number().default(25),
+  porcentaje_ganancia: z.number().default(0)
 });
 
 export const desactivacionMaestro = z.object({

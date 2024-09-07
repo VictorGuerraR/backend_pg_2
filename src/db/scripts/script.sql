@@ -12,12 +12,12 @@ create table registros.usuarios(
     fecha_inactivacion date
 );
 
-CREATE TABLE costo_fijos (
+CREATE TABLE registros.costo_fijos (
     cod_costo_fijo SERIAL PRIMARY KEY,
-    cod_usuario_creacion INT REFERENCES usuarios(cod_usuario),
+    cod_usuario_creacion INT REFERENCES registros.usuarios(cod_usuario),
     fecha_creacion DATE DEFAULT CURRENT_DATE,
     activo BOOLEAN DEFAULT true NOT NULL,
-    cod_usuario_anulacion INT REFERENCES usuarios(cod_usuario),
+    cod_usuario_anulacion INT REFERENCES registros.usuarios(cod_usuario),
     fecha_anulacion DATE,
     codigo_moneda VARCHAR(3) DEFAULT 'GTQ' NOT NULL,
     monto_total NUMERIC(13, 2)

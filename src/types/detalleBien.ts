@@ -12,7 +12,7 @@ export type DetalleBien = {
   monto_total: number;
   codigo_unidad: string;
   unidad: number;
-  cod_detalle: number;
+  cod_maestro: number;
 }
 
 // Esquema para la creación de DetalleBien
@@ -24,12 +24,12 @@ export const creacionDetalleBien = z.object({
   monto_total: z.number(),
   codigo_unidad: z.string().default('KG'),
   unidad: z.number(),
-  cod_detalle: z.number(),
+  cod_maestro: z.number(),
 });
 
 // Esquema para la desactivación de DetalleBien
 export const desactivacionDetalleBien = z.object({
-  cod_materia_prima: z.number(),
+  cod_detalle_bien: z.number(),
   activo: z.boolean().default(false),
   cod_usuario_anulacion: z.number(),
   fecha_anulacion: z.date().default(() => new Date()),

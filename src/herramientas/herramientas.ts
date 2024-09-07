@@ -79,7 +79,8 @@ export async function obtenerHerramientas(req: Request, res: Response) {
     const resultado: Herramienta[] = await whereHerramientas(req.query, consultaHerramientas(), 'h')
     res.status(200).json({ resultado })
   } catch (error) {
-    res.status(404).json({ error })
+    console.log(error)
+    res.status(418).json({ error })
   }
 }
 
@@ -97,7 +98,8 @@ export async function crearHerramienta(req: Request, res: Response) {
 
     res.status(200).json({ respuesta })
   } catch (error) {
-    res.status(404).json({ error })
+    console.log(error)
+    res.status(418).json({ error })
   }
 }
 
@@ -113,7 +115,8 @@ export async function actualizarHerramienta(req: Request, res: Response) {
     })
     res.status(200).json({ respuesta })
   } catch (error) {
-    res.status(404).json({ error })
+    console.log(error)
+    res.status(418).json({ error })
   }
 }
 
@@ -134,6 +137,7 @@ export async function desactivarHerramienta(req: Request, res: Response) {
     })
     res.status(200).json({ respuesta })
   } catch (error) {
-    res.status(404).json({ error })
+    console.log(error)
+    res.status(418).json({ error })
   }
 }

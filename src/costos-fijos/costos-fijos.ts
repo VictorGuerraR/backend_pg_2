@@ -23,7 +23,8 @@ export async function obtenerCostosFijos(req: Request, res: Response) {
 
     res.status(200).json({ respuesta })
   } catch (error) {
-    res.status(500).json({ error })
+    console.log(error)
+    res.status(418).json({ error })
   }
 }
 
@@ -40,7 +41,8 @@ export async function crearCostosFijos(req: Request, res: Response) {
     })
     res.status(200).json({ respuesta })
   } catch (error) {
-    res.status(500).json({ error })
+    console.log(error)
+    res.status(418).json({ error })
   }
 }
 
@@ -56,7 +58,8 @@ export async function actualizarCostosFijos(req: Request, res: Response) {
     })
     res.status(200).json({ respuesta })
   } catch (error) {
-    res.status(500).json({ error })
+    console.log(error)
+    res.status(418).json({ error })
   }
 }
 
@@ -76,6 +79,7 @@ export async function desactivarCostosFijos(req: Request, res: Response) {
     })
     res.status(200).json({ respuesta })
   } catch (error) {
-    res.status(500).json({ error })
+    console.log(error)
+    res.status(418).json({ error })
   }
 }

@@ -67,7 +67,8 @@ export async function obtenerMateriasPrimas(req: Request, res: Response) {
     const respuesta = await whereMateriasPrimas(req.query, consultaMateriasPrimas(), 'mp')
     res.status(200).json({ respuesta })
   } catch (error) {
-    res.status(404).json({ error })
+    console.log(error)
+    res.status(418).json({ error })
   }
 }
 
@@ -86,6 +87,7 @@ export async function crearMateriaPrima(req: Request, res: Response) {
 
     res.status(200).json({ respuesta })
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error })
   }
 }
@@ -103,6 +105,7 @@ export async function actualizarMateriaPrima(req: Request, res: Response) {
 
     res.status(200).json({ respuesta })
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error })
   }
 }
@@ -122,6 +125,7 @@ export async function desactivarMateriaPrima(req: Request, res: Response) {
     })
     res.status(200).json({ respuesta })
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error })
   }
 }
