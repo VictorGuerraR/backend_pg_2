@@ -7,4 +7,5 @@
 *.code-workspace
 
 .env
+package.json
 /node_modules
