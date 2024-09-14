@@ -62,10 +62,14 @@ async function generarToken(username: string, plainTextPassword: string): Promis
 
 export async function token(req: Request, res: Response): Promise<any> {
   try {
-    const { username, password } = req.params
+    const { username, password } = req.body
     const token = await generarToken(username, password)
     if (token) {
-      res.status(200).json({ token })
+      const usuarioRecord = await obtenerUsuario(username);
+      if (usuarioRecord) {
+        const { nombres, apellidos, usuario } = usuarioRecord
+        res.status(200).json({ token, usuario: { nombres, apellidos, usuario } })
+      } else res.status(401).json({ error: { usuario: 'No se encontro usuario activo' } })
     } else {
       res.status(401).json({ error: { usuario: 'No se encontro usuario activo' } })
     }
