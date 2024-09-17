@@ -13,14 +13,20 @@ const consultaCostosFijos = () => db({ cf: 'registros.costo_fijos' })
   .innerJoin({ uc: 'registros.usuarios' }, 'uc.cod_usuario', 'cf.cod_usuario_creacion')
   .select(
     { usuario_creacion: db.raw("concat(uc.nombres, ' ', uc.apellidos)") },
-
+    'cf.cod_costo_fijo',
+    'cf.cod_usuario_creacion',
+    'cf.fecha_creacion',
+    'cf.activo',
+    'cf.cod_usuario_anulacion',
+    'cf.fecha_anulacion',
+    'cf.codigo_moneda',
+    'cf.monto_total'
   )
 
 
 export async function obtenerCostosFijos(req: Request, res: Response) {
   try {
-    let respuesta
-
+    const respuesta = await whereCostosFijos(req.query, consultaCostosFijos(), 'cf')
     res.status(200).json({ respuesta })
   } catch (error) {
     console.log(error)
