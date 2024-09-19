@@ -1,7 +1,15 @@
 import db from '#conexion'
+import paginate from '#pagination'
 import { Knex } from 'knex';
 import { Request, Response } from 'express';
-import { ActualizacionCF, actualizacionCostoFijo, CreacionCF, creacionCostoFijo, DesactivacionCF, desactivacionCostoFijo } from '#types/costosFijos';
+import {
+  ActualizacionCF,
+  CreacionCF,
+  DesactivacionCF,
+  actualizacionCostoFijo,
+  creacionCostoFijo,
+  desactivacionCostoFijo
+} from '#types/costosFijos';
 
 
 function whereCostosFijos(params: any, query: Knex.QueryBuilder, prefix: string): Knex.QueryBuilder {
@@ -24,7 +32,17 @@ const consultaCostosFijos = () => db({ cf: 'registros.costo_fijos' })
 
 export async function obtenerCostosFijos(req: Request, res: Response) {
   try {
-    const respuesta = await whereCostosFijos(req.query, consultaCostosFijos(), 'cf')
+    const { page, limit, ...parametros } = req.query
+
+    const currentPage = Number(req.query.page) || 1;
+    const pageSize = Number(req.query.limit) || 10;
+
+    const respuesta = await paginate({
+      query: whereCostosFijos(parametros, consultaCostosFijos(), 'cf'),
+      currentPage,
+      pageSize
+    });
+
     res.status(200).json({ respuesta })
   } catch (error) {
     console.log(error)
