@@ -17,8 +17,6 @@ const consultaCostosFijos = () => db({ cf: 'registros.costo_fijos' })
     'cf.cod_usuario_creacion',
     'cf.fecha_creacion',
     'cf.activo',
-    'cf.cod_usuario_anulacion',
-    'cf.fecha_anulacion',
     'cf.codigo_moneda',
     'cf.monto_total'
   )
