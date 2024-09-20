@@ -49,7 +49,6 @@ const consultaHerramientas = () => db({ h: 'registros.herramienta' })
   .leftJoin({ ds: 'registros.detalle_servicio' }, 'ds.cod_herramienta', 'h.cod_herramienta')
   .select(
     'h.cod_herramienta',
-    'ds.tiempo_uso',
     'h.cod_tipo_depreciacion',
     'h.cod_usuario_responsable',
     'h.cod_usuario_creacion',
@@ -60,19 +59,28 @@ const consultaHerramientas = () => db({ h: 'registros.herramienta' })
     'h.monto',
     'h.consumo_electrico',
     'h.codigo_medida_electricidad',
-    'pd.descripcion as tipo_depreciacion',
+    { tipo_depreciacion: 'pd.descripcion' },
     { usuario_responsable: db.raw("concat(ur.nombres, ' ', ur.apellidos)") },
     { usuario_creacion: db.raw("concat(uc.nombres, ' ', uc.apellidos)") },
-    { tiempo_en_uso: db.raw('sum(coalesce(ds.tiempo_uso, 0))') }
+    { tiempo_en_uso: db.raw('SUM(COALESCE(ds.tiempo_uso, 0))') }
   )
   .groupBy(
     'h.cod_herramienta',
+    'h.cod_tipo_depreciacion',
+    'h.cod_usuario_responsable',
+    'h.cod_usuario_creacion',
+    'h.fecha_creacion',
+    'h.activo',
+    'h.codigo_moneda',
+    'h.descripcion',
+    'h.monto',
+    'h.consumo_electrico',
+    'h.codigo_medida_electricidad',
     'pd.descripcion',
     'ur.nombres',
     'ur.apellidos',
     'uc.nombres',
-    'uc.apellidos',
-    'ds.tiempo_uso'
+    'uc.apellidos'
   )
 
 export async function obtenerHerramientas(req: Request, res: Response) {

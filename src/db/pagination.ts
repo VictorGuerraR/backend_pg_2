@@ -19,8 +19,9 @@
 * @example
 * // Ejemplo de URL para obtener la segunda página con un tamaño de página de 20:
 * /api/users?page=2&pageSize=20
-*/ 
+*/
 
+import db from '#conexion'
 import { Knex } from 'knex';
 
 interface PaginateParams {
@@ -31,14 +32,12 @@ interface PaginateParams {
 
 const paginate = async ({ query, currentPage = 1, pageSize = 10 }: PaginateParams) => {
   // Clonamos la consulta para contar los elementos totales
-  const countQuery = await query
-    .clone()
-    .clearOrder()
-    .clearSelect()
-    .count({ total: '*' })
-    .first();
+  // const countQuery = await db({ copia: query.clone().clearSelect().clearOrder().count({ total: '*' }) }).count({ total: '*' })
+  const [{ total }] = await db
+    .select({ total: db.raw('count(*)') })
+    .from(query.clone().clearSelect().clearOrder().count({ total: '*' }).as('subquery'));
 
-  const totalElements = Number(countQuery?.total || 0);
+  const totalElements = Number(total || 0);
   const totalPages = Math.ceil(totalElements / pageSize);
   const offset = (currentPage - 1) * pageSize;
 
