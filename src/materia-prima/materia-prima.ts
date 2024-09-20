@@ -62,6 +62,7 @@ const consultaMateriasPrimas = () => db({ mp: 'registros.materia_prima' })
     'uc.nombres',
     'uc.apellidos'
   )
+  .orderBy('mp.cod_materia_prima', 'desc')
 
 export async function obtenerMateriasPrimas(req: Request, res: Response) {
   try {

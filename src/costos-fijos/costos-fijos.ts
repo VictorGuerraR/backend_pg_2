@@ -28,6 +28,12 @@ const consultaCostosFijos = () => db({ cf: 'registros.costo_fijos' })
     'cf.codigo_moneda',
     'cf.monto_total'
   )
+  .groupBy(
+    'cf.cod_costo_fijo',
+    'uc.nombres',
+    'uc.apellidos'
+  )
+  .orderBy('cf.cod_costo_fijo', 'desc')
 
 
 export async function obtenerCostosFijos(req: Request, res: Response) {

@@ -15,9 +15,30 @@ function whereMaestro(params: any, query: Knex.QueryBuilder, prefix: string): Kn
 }
 
 const consultaMaestro = () => db({ m: 'registros.maestro' })
-  .leftJoin({ db: 'registros.detalle_bien' }, 'db.cod_maestro', 'm.cod_maestro')
-  .leftJoin({ ds: 'registros.detalle_servicio' }, 'ds.cod_maestro', 'm.cod_maestro')
-  .select('*')
+  .innerJoin({ uc: 'registros.usuarios' }, 'm.cod_usuario_creacion', 'uc.cod_usuario')
+  .select(
+    'm.cod_maestro',
+    'm.cod_usuario_creacion',
+    'm.fecha_creacion',
+    'm.activo',
+    'm.cod_usuario_anulacion',
+    'm.fecha_anulacion',
+    'm.descripcion',
+    'm.codigo_moneda',
+    'm.monto_total',
+    'm.porcentaje_impuesto',
+    'm.monto_impuesto',
+    'm.precio_kw',
+    'm.monto_ganacia',
+    'm.porcentaje_ganancia',
+    { usuario_creacion: db.raw("concat(uc.nombres, ' ', uc.apellidos)") },
+  )
+  .groupBy(
+    'm.cod_maestro',
+    'uc.nombres',
+    'uc.apellidos'
+  )
+  .orderBy('m.cod_maestro', 'desc')
 
 export async function obtenerRegistrosMaestros(req: Request, res: Response) {
   try {

@@ -82,6 +82,7 @@ const consultaHerramientas = () => db({ h: 'registros.herramienta' })
     'uc.nombres',
     'uc.apellidos'
   )
+  .orderBy('h.cod_herramienta', 'desc')
 
 export async function obtenerHerramientas(req: Request, res: Response) {
   try {

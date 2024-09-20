@@ -35,7 +35,7 @@ const paginate = async ({ query, currentPage = 1, pageSize = 10 }: PaginateParam
   // const countQuery = await db({ copia: query.clone().clearSelect().clearOrder().count({ total: '*' }) }).count({ total: '*' })
   const [{ total }] = await db
     .select({ total: db.raw('count(*)') })
-    .from(query.clone().clearSelect().clearOrder().count({ total: '*' }).as('subquery'));
+    .from(query.clone().clearOrder().count({ total: '*' }).as('subquery'));
 
   const totalElements = Number(total || 0);
   const totalPages = Math.ceil(totalElements / pageSize);
