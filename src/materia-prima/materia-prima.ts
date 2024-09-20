@@ -1,5 +1,6 @@
 import db from '#conexion'
 import { Knex } from 'knex';
+import paginate from '#pagination'
 import {
   CreacionMP,
   ActualizacionMP,
@@ -64,7 +65,16 @@ const consultaMateriasPrimas = () => db({ mp: 'registros.materia_prima' })
 
 export async function obtenerMateriasPrimas(req: Request, res: Response) {
   try {
-    const respuesta = await whereMateriasPrimas(req.query, consultaMateriasPrimas(), 'mp')
+    const { page, limit, ...parametros } = req.query
+    const currentPage = Number(req.query.page) || 1;
+    const pageSize = Number(req.query.limit) || 10;
+
+    const respuesta = await paginate({
+      query: whereMateriasPrimas(parametros, consultaMateriasPrimas(), 'mp'),
+      currentPage,
+      pageSize
+    })
+
     res.status(200).json({ respuesta })
   } catch (error) {
     console.log(error)

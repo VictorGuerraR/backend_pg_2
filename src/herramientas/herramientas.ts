@@ -1,5 +1,6 @@
 import db from '#conexion'
 import { Knex } from 'knex';
+import paginate from '#pagination'
 import { Request, Response } from 'express';
 import {
   Herramienta,
@@ -76,8 +77,17 @@ const consultaHerramientas = () => db({ h: 'registros.herramienta' })
 
 export async function obtenerHerramientas(req: Request, res: Response) {
   try {
-    const resultado: Herramienta[] = await whereHerramientas(req.query, consultaHerramientas(), 'h')
-    res.status(200).json({ resultado })
+    const { page, limit, ...parametros } = req.query
+    const currentPage = Number(req.query.page) || 1;
+    const pageSize = Number(req.query.limit) || 10;
+
+    const respuesta = await paginate({
+      query: whereHerramientas(parametros, consultaHerramientas(), 'h'),
+      currentPage,
+      pageSize
+    });
+
+    res.status(200).json({ respuesta })
   } catch (error) {
     console.log(error)
     res.status(418).json({ error })

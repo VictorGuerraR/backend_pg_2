@@ -1,5 +1,6 @@
 import db from '#conexion'
 import { Knex } from 'knex';
+import paginate from '#pagination'
 import { Request, Response } from 'express';
 import {
   creacionMaestro,
@@ -20,7 +21,16 @@ const consultaMaestro = () => db({ m: 'registros.maestro' })
 
 export async function obtenerRegistrosMaestros(req: Request, res: Response) {
   try {
-    const respuesta: Maestro[] = await whereMaestro(req.query, consultaMaestro(), 'm')
+    const { page, limit, ...parametros } = req.query
+    const currentPage = Number(req.query.page) || 1;
+    const pageSize = Number(req.query.limit) || 10;
+
+    const respuesta = await paginate({
+      query: whereMaestro(parametros, consultaMaestro(), 'm'),
+      currentPage,
+      pageSize
+    })
+
     res.status(200).json({ respuesta })
   } catch (error) {
     console.log(error)

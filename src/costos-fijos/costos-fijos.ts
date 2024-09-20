@@ -33,7 +33,6 @@ const consultaCostosFijos = () => db({ cf: 'registros.costo_fijos' })
 export async function obtenerCostosFijos(req: Request, res: Response) {
   try {
     const { page, limit, ...parametros } = req.query
-
     const currentPage = Number(req.query.page) || 1;
     const pageSize = Number(req.query.limit) || 10;
 
