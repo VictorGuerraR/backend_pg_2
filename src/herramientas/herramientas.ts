@@ -97,6 +97,7 @@ export async function obtenerHerramientas(req: Request, res: Response) {
     });
 
     res.status(200).json({ respuesta })
+    console.log({ code: 200, message: 'Respuesta exitosa en herramientas', scope: 'get' })
   } catch (error) {
     console.log(error)
     res.status(418).json({ error })
@@ -109,6 +110,7 @@ export async function crearHerramienta(req: Request, res: Response) {
     const herramienta: CreacionH = creacionHerramienta.parse(
       { cod_usuario_creacion: req.usuario?.cod_usuario, ...req.body }
     )
+
     await db.transaction(async (trx) => {
       respuesta = await trx('registros.herramienta')
         .insert(herramienta)
@@ -116,6 +118,7 @@ export async function crearHerramienta(req: Request, res: Response) {
     })
 
     res.status(200).json({ respuesta })
+    console.log({ code: 200, message: 'Respuesta exitosa en herramientas', scope: 'post' })
   } catch (error) {
     console.log(error)
     res.status(418).json({ error })
@@ -126,13 +129,16 @@ export async function actualizarHerramienta(req: Request, res: Response) {
   try {
     let respuesta
     const { cod_herramienta, ...herramienta }: ActualizacionH = actualizacionHerramienta.parse(req.body)
+
     await db.transaction(async (trx) => {
       respuesta = await trx('registros.herramienta')
         .update(herramienta)
         .where({ cod_herramienta })
         .returning('cod_herramienta')
     })
+
     res.status(200).json({ respuesta })
+    console.log({ code: 200, message: 'Respuesta exitosa en herramientas', scope: 'patch' })
   } catch (error) {
     console.log(error)
     res.status(418).json({ error })
@@ -154,7 +160,9 @@ export async function desactivarHerramienta(req: Request, res: Response) {
         .where({ cod_herramienta })
         .returning('cod_herramienta')
     })
+
     res.status(200).json({ respuesta })
+    console.log({ code: 200, message: 'Respuesta exitosa en herramientas', scope: 'delete' })
   } catch (error) {
     console.log(error)
     res.status(418).json({ error })

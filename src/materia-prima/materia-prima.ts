@@ -77,6 +77,7 @@ export async function obtenerMateriasPrimas(req: Request, res: Response) {
     })
 
     res.status(200).json({ respuesta })
+    console.log({ code: 200, message: 'Respuesta exitosa en materia-prima', scope: 'get' })
   } catch (error) {
     console.log(error)
     res.status(418).json({ error })
@@ -97,6 +98,7 @@ export async function crearMateriaPrima(req: Request, res: Response) {
     })
 
     res.status(200).json({ respuesta })
+    console.log({ code: 200, message: 'Respuesta exitosa en materia-prima', scope: 'post' })
   } catch (error) {
     console.log(error)
     res.status(500).json({ error })
@@ -115,6 +117,7 @@ export async function actualizarMateriaPrima(req: Request, res: Response) {
     })
 
     res.status(200).json({ respuesta })
+    console.log({ code: 200, message: 'Respuesta exitosa en materia-prima', scope: 'patch' })
   } catch (error) {
     console.log(error)
     res.status(500).json({ error })
@@ -128,13 +131,16 @@ export async function desactivarMateriaPrima(req: Request, res: Response) {
       .parse(
         { cod_usuario_anulacion: req.usuario?.cod_usuario, ...req.body }
       )
+
     await db.transaction(async (trx) => {
       respuesta = await trx('registros.materia_prima')
         .update(materiPrima)
         .where({ cod_materia_prima })
         .returning('cod_materia_prima')
     })
+
     res.status(200).json({ respuesta })
+    console.log({ code: 200, message: 'Respuesta exitosa en materia-prima', scope: 'delete' })
   } catch (error) {
     console.log(error)
     res.status(500).json({ error })

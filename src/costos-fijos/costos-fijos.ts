@@ -13,6 +13,26 @@ import {
 
 
 function whereCostosFijos(params: any, query: Knex.QueryBuilder, prefix: string): Knex.QueryBuilder {
+  for (const [key, value] of Object.entries(params)) {
+    if (!value) continue
+    switch (key) {
+      case 'cod_costo_fijo':
+      case 'cod_usuario_creacion':
+      case 'cod_usuario_anulacion':
+        query.where(`${prefix}.${key}`, Number(value))
+        break;
+      case 'activo':
+        query.where(`${prefix}.${key}`, Boolean(value))
+        break;
+      case 'descripcion':
+        query.whereILike(`${prefix}.${key}`, value)
+        break;
+
+      default:
+        break;
+    }
+  }
+
   return query
 }
 
@@ -49,6 +69,7 @@ export async function obtenerCostosFijos(req: Request, res: Response) {
     });
 
     res.status(200).json({ respuesta })
+    console.log({ code: 200, message: 'Respuesta exitosa en costos-fijos', scope: 'get' })
   } catch (error) {
     console.log(error)
     res.status(418).json({ error })
@@ -61,12 +82,15 @@ export async function crearCostosFijos(req: Request, res: Response) {
     const costoFijo: CreacionCF = creacionCostoFijo.parse(
       { cod_usuario_creacion: req.usuario?.cod_usuario, ...req.body }
     )
+
     await db.transaction(async (trx) => {
       respuesta = await trx('registros.costo_fijos')
         .insert(costoFijo)
         .returning('cod_costo_fijo')
     })
+
     res.status(200).json({ respuesta })
+    console.log({ code: 200, message: 'Respuesta exitosa en costos-fijos', scope: 'post' })
   } catch (error) {
     console.log(error)
     res.status(418).json({ error })
@@ -77,13 +101,16 @@ export async function actualizarCostosFijos(req: Request, res: Response) {
   try {
     let respuesta
     const { cod_costo_fijo, ...costoFijo }: ActualizacionCF = actualizacionCostoFijo.parse(req.body)
+
     await db.transaction(async (trx) => {
       respuesta = await trx('registros.costo_fijos')
         .insert(costoFijo)
         .where({ cod_costo_fijo })
         .returning('cod_costo_fijo')
     })
+
     res.status(200).json({ respuesta })
+    console.log({ code: 200, message: 'Respuesta exitosa en costos-fijos', scope: 'patch' })
   } catch (error) {
     console.log(error)
     res.status(418).json({ error })
@@ -98,13 +125,16 @@ export async function desactivarCostosFijos(req: Request, res: Response) {
         cod_usuario_anulacion: req.usuario?.cod_usuario, ...req.body
       }
     )
+
     await db.transaction(async (trx) => {
       respuesta = await trx('registros.costo_fijos')
-        .insert(costoFijo)
+        .update(costoFijo)
         .where({ cod_costo_fijo })
         .returning('cod_costo_fijo')
     })
+
     res.status(200).json({ respuesta })
+    console.log({ code: 200, message: 'Respuesta exitosa en costos-fijos', scope: 'delete' })
   } catch (error) {
     console.log(error)
     res.status(418).json({ error })
