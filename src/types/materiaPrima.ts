@@ -3,7 +3,7 @@ import { z } from "zod";
 // Define el esquema para creacionMateriaPrima
 export const creacionMateriaPrima = z.object({
   cod_usuario_creacion: z.union([z.string(), z.number()]).transform((val) => Number(val)),
-  fecha_creacion: z.date().default(() => new Date()),
+  fecha_creacion: z.union([z.string(), z.date()]).transform((val) => new Date(val)).default(() => new Date()),
   descripcion: z.string(),
   codigo_moneda: z.string().default('GTQ'),
   monto: z.union([z.string(), z.number()]).transform((val) => Number(val)),
@@ -24,7 +24,7 @@ export const actualizacionMateriaPrima = z.object({
 export const desactivacionMateriaPrima = z.object({
   cod_materia_prima: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   cod_usuario_anulacion: z.union([z.string(), z.number()]).transform((val) => Number(val)),
-  fecha_anulacion: z.date().default(() => new Date()),
+  fecha_anulacion: z.union([z.string(), z.date()]).transform((val) => new Date(val)).default(() => new Date()),
   activo: z.boolean().default(false)
 });
 

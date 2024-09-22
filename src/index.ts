@@ -4,6 +4,7 @@ import express from 'express';
 import login from '#login/router';
 import registos from '#registros/router'
 import registros from '#registros/router'
+import catalogos from '#catalogos/router'
 import costosFijos from '#costosFijos/router'
 import herramientas from '#herramientas/router'
 import materiasPrimas from '#materiasPrimas/router'
@@ -21,6 +22,7 @@ app.use(express.json({ limit: '100mb' }))
 app.use(login)
 app.use(registos)
 app.use(registros)
+app.use(catalogos)
 app.use(costosFijos)
 app.use(herramientas)
 app.use(materiasPrimas)

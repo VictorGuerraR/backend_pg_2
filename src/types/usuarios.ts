@@ -30,7 +30,7 @@ export const actualizacionUsuario = z.object({
 export const desactivacionUsuario = z.object({
   cod_usuario: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   activo: z.boolean().default(false),
-  fecha_inactivacion: z.date().default(() => new Date()),
+  fecha_inactivacion: z.union([z.string(), z.date()]).transform((val) => new Date(val)).default(() => new Date()),
 });
 
 export type CreacionU = z.infer<typeof creacionUsuario>;

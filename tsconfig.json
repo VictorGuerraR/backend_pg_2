@@ -31,6 +31,9 @@
       "#pagination": [
         "src/db/pagination.ts"
       ],
+      "#catalogos/*": [
+        "src/catalogos/*"
+      ],
       "#conexion": [
         "src/db/db.ts"
       ],

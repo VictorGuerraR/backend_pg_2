@@ -19,7 +19,7 @@ export type DetalleBien = {
 export const creacionDetalleBien = z.object({
   cod_materia_prima: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   cod_usuario_creacion: z.union([z.string(), z.number()]).transform((val) => Number(val)),
-  fecha_creacion: z.date().default(() => new Date()),
+  fecha_creacion: z.union([z.string(), z.date()]).transform((val) => new Date(val)).default(() => new Date()),
   activo: z.boolean().default(true),
   monto_total: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   codigo_unidad: z.string().default('KG'),
@@ -32,7 +32,7 @@ export const desactivacionDetalleBien = z.object({
   cod_detalle_bien: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   activo: z.boolean().default(false),
   cod_usuario_anulacion: z.union([z.string(), z.number()]).transform((val) => Number(val)),
-  fecha_anulacion: z.date().default(() => new Date()),
+  fecha_anulacion: z.union([z.string(), z.date()]).transform((val) => new Date(val)).default(() => new Date()),
 });
 
 // Inferir los tipos desde los esquemas si es necesario

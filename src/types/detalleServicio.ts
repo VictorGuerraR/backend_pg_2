@@ -19,7 +19,7 @@ export type DetalleServicio = {
 export const creacionDetalleServicio = z.object({
   cod_herramienta: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   cod_usuario_creacion: z.union([z.string(), z.number()]).transform((val) => Number(val)),
-  fecha_creacion: z.date().default(() => new Date()),
+  fecha_creacion: z.union([z.string(), z.date()]).transform((val) => new Date(val)).default(() => new Date()),
   activo: z.boolean().default(true),
   tiempo_uso: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   codigo_tiempo_uso: z.string().default("H"),
@@ -32,7 +32,7 @@ export const desactivacionDetalleServicio = z.object({
   cod_detalle_servicio: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   activo: z.boolean().default(false),
   cod_usuario_anulacion: z.union([z.string(), z.number()]).transform((val) => Number(val)).nullable(),
-  fecha_anulacion: z.date().default(() => new Date()),
+  fecha_anulacion: z.union([z.string(), z.date()]).transform((val) => new Date(val)).default(() => new Date()),
 });
 
 // Inferir los tipos desde los esquemas si es necesario
