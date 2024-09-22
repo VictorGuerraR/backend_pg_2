@@ -17,21 +17,21 @@ export type DetalleServicio = {
 
 // Esquema para la creación de DetalleServicio
 export const creacionDetalleServicio = z.object({
-  cod_herramienta: z.number(),
-  cod_usuario_creacion: z.number(),
+  cod_herramienta: z.union([z.string(), z.number()]).transform((val) => Number(val)),
+  cod_usuario_creacion: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   fecha_creacion: z.date().default(() => new Date()),
   activo: z.boolean().default(true),
-  tiempo_uso: z.number(),
+  tiempo_uso: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   codigo_tiempo_uso: z.string().default("H"),
-  monto_total: z.number(),
-  cod_maestro: z.number(),
+  monto_total: z.union([z.string(), z.number()]).transform((val) => Number(val)),
+  cod_maestro: z.union([z.string(), z.number()]).transform((val) => Number(val)),
 });
 
 // Esquema para la desactivación de DetalleServicio
 export const desactivacionDetalleServicio = z.object({
-  cod_detalle_servicio: z.number(),
+  cod_detalle_servicio: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   activo: z.boolean().default(false),
-  cod_usuario_anulacion: z.number().nullable(),
+  cod_usuario_anulacion: z.union([z.string(), z.number()]).transform((val) => Number(val)).nullable(),
   fecha_anulacion: z.date().default(() => new Date()),
 });
 

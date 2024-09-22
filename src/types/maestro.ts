@@ -17,21 +17,21 @@ export type Maestro = {
 }
 
 export const creacionMaestro = z.object({
-  cod_usuario_creacion: z.number(),
+  cod_usuario_creacion: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   fecha_creacion: z.date().default(() => new Date()),
   activo: z.boolean().default(true),
-  monto_total: z.number(),
-  porcentaje_impuesto: z.number().default(5),
-  monto_impuesto: z.number().default(0),
-  precio_kw: z.number().default(1),
-  monto_ganacia: z.number().default(25),
-  porcentaje_ganancia: z.number().default(0)
+  monto_total: z.union([z.string(), z.number()]).transform((val) => Number(val)),
+  porcentaje_impuesto: z.union([z.string(), z.number()]).transform((val) => Number(val)).default(5),
+  monto_impuesto: z.union([z.string(), z.number()]).transform((val) => Number(val)).default(0),
+  precio_kw: z.union([z.string(), z.number()]).transform((val) => Number(val)).default(1),
+  monto_ganacia: z.union([z.string(), z.number()]).transform((val) => Number(val)).default(25),
+  porcentaje_ganancia: z.union([z.string(), z.number()]).transform((val) => Number(val)).default(0)
 });
 
 export const desactivacionMaestro = z.object({
-  cod_maestro: z.number(),
+  cod_maestro: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   activo: z.boolean().default(false),
-  cod_usuario_anulacion: z.number().nullable(),
+  cod_usuario_anulacion: z.union([z.string(), z.number()]).transform((val) => Number(val)).nullable(),
   fecha_anulacion: z.date().default(() => new Date()),
 });
 

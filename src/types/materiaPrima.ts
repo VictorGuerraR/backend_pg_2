@@ -2,28 +2,28 @@ import { z } from "zod";
 
 // Define el esquema para creacionMateriaPrima
 export const creacionMateriaPrima = z.object({
-  cod_usuario_creacion: z.number(),
+  cod_usuario_creacion: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   fecha_creacion: z.date().default(() => new Date()),
   descripcion: z.string(),
   codigo_moneda: z.string().default('GTQ'),
-  monto: z.number(),
+  monto: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   activo: z.boolean().default(true),
-  cantidad: z.number(),
+  cantidad: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   codigo_unidad: z.string().default('KG'),
 });
 
 // Define el esquema para creacionMateriaPrima
 export const actualizacionMateriaPrima = z.object({
-  cod_materia_prima: z.number(),
+  cod_materia_prima: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   descripcion: z.string(),
-  monto: z.number(),
-  cantidad: z.number(),
+  monto: z.union([z.string(), z.number()]).transform((val) => Number(val)),
+  cantidad: z.union([z.string(), z.number()]).transform((val) => Number(val)),
 });
 
 // Define el esquema para creacionMateriaPrima
 export const desactivacionMateriaPrima = z.object({
-  cod_materia_prima: z.number(),
-  cod_usuario_anulacion: z.number(),
+  cod_materia_prima: z.union([z.string(), z.number()]).transform((val) => Number(val)),
+  cod_usuario_anulacion: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   fecha_anulacion: z.date().default(() => new Date()),
   activo: z.boolean().default(false)
 });

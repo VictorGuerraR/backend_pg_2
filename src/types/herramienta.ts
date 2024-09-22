@@ -18,29 +18,29 @@ export type Herramienta = {
 
 export const creacionHerramienta = z.object({
   activo: z.boolean().default(true),
-  cod_tipo_depreciacion: z.number(),
-  cod_usuario_creacion: z.number(),
-  cod_usuario_responsable: z.number(),
-  consumo_electrico: z.number(),
+  cod_tipo_depreciacion: z.union([z.string(), z.number()]).transform((val) => Number(val)),
+  cod_usuario_creacion: z.union([z.string(), z.number()]).transform((val) => Number(val)),
+  cod_usuario_responsable: z.union([z.string(), z.number()]).transform((val) => Number(val)),
+  consumo_electrico: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   descripcion: z.string(),
   fecha_creacion: z.date().default(() => new Date()),
   fecha_adquisicion: z.date().default(() => new Date()),
-  monto: z.number(),
+  monto: z.union([z.string(), z.number()]).transform((val) => Number(val)),
 });
 
 export const actualizacionHerramienta = z.object({
-  cod_herramienta: z.number(),
-  cod_tipo_depreciacion: z.number(),
-  consumo_electrico: z.number(),
+  cod_herramienta: z.union([z.string(), z.number()]).transform((val) => Number(val)),
+  cod_tipo_depreciacion: z.union([z.string(), z.number()]).transform((val) => Number(val)),
+  consumo_electrico: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   descripcion: z.string(),
   fecha_adquisicion: z.date(),
-  monto: z.number(),
+  monto: z.union([z.string(), z.number()]).transform((val) => Number(val)),
 });
 
 export const desactivacionHerramienta = z.object({
   activo: z.boolean().default(false),
-  cod_herramienta: z.number(),
-  cod_usuario_anulacion: z.number(),
+  cod_herramienta: z.union([z.string(), z.number()]).transform((val) => Number(val)),
+  cod_usuario_anulacion: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   fecha_anulacion: z.date().default(() => new Date()),
 });
 

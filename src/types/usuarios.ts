@@ -20,7 +20,7 @@ export const creacionUsuario = z.object({
 
 // Define el esquema para Actualizacion
 export const actualizacionUsuario = z.object({
-  cod_usuario: z.number(),
+  cod_usuario: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   nombres: z.string(),
   apellidos: z.string(),
   password: z.string(),
@@ -28,7 +28,7 @@ export const actualizacionUsuario = z.object({
 
 // Define el esquema para Inactivacion
 export const desactivacionUsuario = z.object({
-  cod_usuario: z.number(),
+  cod_usuario: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   activo: z.boolean().default(false),
   fecha_inactivacion: z.date().default(() => new Date()),
 });

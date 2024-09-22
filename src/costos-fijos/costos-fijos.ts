@@ -45,6 +45,7 @@ const consultaCostosFijos = () => db({ cf: 'registros.costo_fijos' })
     'cf.cod_usuario_creacion',
     'cf.fecha_creacion',
     'cf.activo',
+    'cf.descripcion',
     'cf.codigo_moneda',
     'cf.monto_total'
   )
@@ -104,7 +105,7 @@ export async function actualizarCostosFijos(req: Request, res: Response) {
 
     await db.transaction(async (trx) => {
       respuesta = await trx('registros.costo_fijos')
-        .insert(costoFijo)
+        .update(costoFijo)
         .where({ cod_costo_fijo })
         .returning('cod_costo_fijo')
     })

@@ -17,21 +17,21 @@ export type DetalleBien = {
 
 // Esquema para la creación de DetalleBien
 export const creacionDetalleBien = z.object({
-  cod_materia_prima: z.number(),
-  cod_usuario_creacion: z.number(),
+  cod_materia_prima: z.union([z.string(), z.number()]).transform((val) => Number(val)),
+  cod_usuario_creacion: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   fecha_creacion: z.date().default(() => new Date()),
   activo: z.boolean().default(true),
-  monto_total: z.number(),
+  monto_total: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   codigo_unidad: z.string().default('KG'),
-  unidad: z.number(),
-  cod_maestro: z.number(),
+  unidad: z.union([z.string(), z.number()]).transform((val) => Number(val)),
+  cod_maestro: z.union([z.string(), z.number()]).transform((val) => Number(val)),
 });
 
 // Esquema para la desactivación de DetalleBien
 export const desactivacionDetalleBien = z.object({
-  cod_detalle_bien: z.number(),
+  cod_detalle_bien: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   activo: z.boolean().default(false),
-  cod_usuario_anulacion: z.number(),
+  cod_usuario_anulacion: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   fecha_anulacion: z.date().default(() => new Date()),
 });
 

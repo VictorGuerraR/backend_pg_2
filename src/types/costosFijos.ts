@@ -13,23 +13,23 @@ export type CostoFijo = {
 }
 
 export const creacionCostoFijo = z.object({
-  cod_usuario_creacion: z.number(),
+  cod_usuario_creacion: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   descripcion: z.string(),
   fecha_creacion: z.date().default(() => new Date()),
   activo: z.boolean().default(true),
   codigo_moneda: z.string().default('GTQ'),
-  monto_total: z.number().default(0)
+  monto_total: z.union([z.string(), z.number()]).transform((val) => Number(val)).default(0)
 })
 
 export const actualizacionCostoFijo = z.object({
-  cod_costo_fijo: z.number(),
+  cod_costo_fijo: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   descripcion: z.string(),
-  monto_total: z.number().default(0)
+  monto_total: z.union([z.string(), z.number()]).transform((val) => Number(val)).default(0)
 })
 
 export const desactivacionCostoFijo = z.object({
-  cod_costo_fijo: z.number(),
-  cod_usuario_anulacion: z.number(),
+  cod_costo_fijo: z.union([z.string(), z.number()]).transform((val) => Number(val)),
+  cod_usuario_anulacion: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   fecha_anulacion: z.date().default(() => new Date()),
   activo: z.boolean().default(false),
 })
