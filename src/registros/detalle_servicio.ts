@@ -9,6 +9,23 @@ import {
 } from '#types/detalleServicio';
 
 function whereDetalleServicio(params: any, query: Knex.QueryBuilder, prefix: string): Knex.QueryBuilder {
+  for (const [key, value] of Object.entries(params)) {
+    if (!value) continue
+    switch (key) {
+      case 'cod_maestro':
+        query.where(`${prefix}.${key}`, Number(value))
+        break;
+      case 'activo':
+        query.where(`${prefix}.${key}`, Boolean(value))
+        break;
+      case 'descripcion':
+        query.whereILike(`${prefix}.${key}`, value)
+        break;
+
+      default:
+        break;
+    }
+  }
   return query
 }
 
@@ -19,6 +36,7 @@ export async function obtenerRegistrosDetalleServicios(req: Request, res: Respon
   try {
     const respuesta = await whereDetalleServicio(req.query, consultaDetalleServicios(), 's')
     res.status(200).json({ respuesta })
+    console.log({ code: 200, message: 'Respuesta exitosa en detalle_servicio', scope: 'get' })
   } catch (error) {
     console.log(error)
     res.status(418).json({ error })
@@ -38,6 +56,7 @@ export async function crearDetalleServicio(req: Request, res: Response) {
     })
 
     res.status(200).json({ respuesta })
+    console.log({ code: 200, message: 'Respuesta exitosa en detalle_servicio', scope: 'post' })
   } catch (error) {
     console.log(error)
     res.status(418).json({ error })
@@ -58,6 +77,7 @@ export async function desactivarDetalleServicio(req: Request, res: Response) {
         .returning('cod_detalle_servicio')
     })
     res.status(200).json({ respuesta })
+    console.log({ code: 200, message: 'Respuesta exitosa en detalle_servicio', scope: 'delete' })
   } catch (error) {
     console.log(error)
     res.status(418).json({ error })

@@ -10,6 +10,23 @@ import {
 } from '#types/detalleBien';
 
 function whereDetalleBien(params: any, query: Knex.QueryBuilder, prefix: string): Knex.QueryBuilder {
+  for (const [key, value] of Object.entries(params)) {
+    if (!value) continue
+    switch (key) {
+      case 'cod_maestro':
+        query.where(`${prefix}.${key}`, Number(value))
+        break;
+      case 'activo':
+        query.where(`${prefix}.${key}`, Boolean(value))
+        break;
+      case 'descripcion':
+        query.whereILike(`${prefix}.${key}`, value)
+        break;
+
+      default:
+        break;
+    }
+  }
   return query
 }
 
@@ -18,8 +35,8 @@ const consultaDetalleBien = () => db({ db: 'registros.detalle_bien' })
 export async function obtenerRegistrosDetalleBienes(req: Request, res: Response) {
   try {
     const respuesta: DetalleBien[] = await whereDetalleBien(req.query, consultaDetalleBien(), 'db')
-
     res.status(200).json({ respuesta })
+    console.log({ code: 200, message: 'Respuesta exitosa en detalle_bien', scope: 'get' })
   } catch (error) {
     console.log(error)
     res.status(418).json({ error })
@@ -39,6 +56,7 @@ export async function crearDetalleBien(req: Request, res: Response) {
         .returning('cod_detalle_bien')
     })
     res.status(200).json({ respuesta })
+    console.log({ code: 200, message: 'Respuesta exitosa en detalle_bien', scope: 'post' })
   } catch (error) {
     console.log(error)
     res.status(418).json({ error })
@@ -63,6 +81,7 @@ export async function desactivarDetalleBien(req: Request, res: Response) {
     })
 
     res.status(200).json({ respuesta })
+    console.log({ code: 200, message: 'Respuesta exitosa en detalle_bien', scope: 'delete' })
   } catch (error) {
     console.log(error)
     res.status(418).json({ error })
