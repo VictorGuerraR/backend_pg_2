@@ -30,7 +30,20 @@ function whereDetalleServicio(params: any, query: Knex.QueryBuilder, prefix: str
 }
 
 const consultaDetalleServicios = () => db({ ds: 'registros.detalle_servicio' })
-  .select('*')
+  .innerJoin({ uc: 'registros.usuarios' }, 'uc.cod_usuario_creacion', 'ds.cod_usuario')
+  .select(
+    'ds.activo',
+    'ds.cod_detalle_servicio',
+    'ds.cod_herramienta',
+    'ds.cod_maestro',
+    'ds.cod_usuario_creacion',
+    'ds.codigo_moneda',
+    'ds.codigo_tiempo_uso',
+    'ds.fecha_creacion',
+    'ds.monto_total',
+    'ds.tiempo_uso',
+    { usuario_creacion: db.raw("concat(uc.nombres, ' ', uc.apellidos)") },
+  )
 
 export async function obtenerRegistrosDetalleServicios(req: Request, res: Response) {
   try {

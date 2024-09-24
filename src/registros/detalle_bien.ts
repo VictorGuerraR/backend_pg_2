@@ -31,6 +31,22 @@ function whereDetalleBien(params: any, query: Knex.QueryBuilder, prefix: string)
 }
 
 const consultaDetalleBien = () => db({ db: 'registros.detalle_bien' })
+  .innerJoin({ uc: 'registros.usuarios' }, 'uc.cod_usuario_creacion', 'db.cod_usuario')
+  .innerJoin({ mp: 'registros.materia_prima' }, 'db.cod_materia_prima', 'mp.cod_materia_prima')
+  .select(
+    'db.activo',
+    'db.cod_detalle_bien',
+    'db.cod_maestro',
+    'db.cod_materia_prima',
+    'db.codigo_moneda',
+    'db.codigo_unidad',
+    'db.fecha_creacion',
+    'db.monto_total',
+    'db.unidad',
+    { descripcion_materia: 'mp.descripcion' },
+    { usuario_creacion: db.raw("concat(uc.nombres, ' ', uc.apellidos)") }
+  )
+
 
 export async function obtenerRegistrosDetalleBienes(req: Request, res: Response) {
   try {
