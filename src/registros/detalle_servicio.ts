@@ -45,6 +45,8 @@ const consultaDetalleServicios = () => db({ ds: 'registros.detalle_servicio' })
     'ds.tiempo_uso',
     { usuario_creacion: db.raw("concat(uc.nombres, ' ', uc.apellidos)") },
   )
+  .orderBy('ds.cod_detalle_servicio', 'desc')
+
 
 export async function obtenerRegistrosDetalleServicios(req: Request, res: Response) {
   try {

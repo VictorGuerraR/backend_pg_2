@@ -17,6 +17,7 @@ export type DetalleBien = {
 
 // Esquema para la creación de DetalleBien
 export const creacionDetalleBien = z.object({
+  descripcion: z.string(),
   cod_materia_prima: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   cod_usuario_creacion: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   fecha_creacion: z.union([z.string(), z.date()]).transform((val) => new Date(val)).default(() => new Date()),

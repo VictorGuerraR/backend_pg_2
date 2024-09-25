@@ -47,6 +47,7 @@ const consultaDetalleBien = () => db({ db: 'registros.detalle_bien' })
     { descripcion_materia: 'mp.descripcion' },
     { usuario_creacion: db.raw("concat(uc.nombres, ' ', uc.apellidos)") }
   )
+  .orderBy('db.cod_detalle_bien', 'desc')
 
 
 export async function obtenerRegistrosDetalleBienes(req: Request, res: Response) {

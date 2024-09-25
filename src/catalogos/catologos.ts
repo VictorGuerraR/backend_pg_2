@@ -72,6 +72,7 @@ export async function materiaPrima(req: Request, res: Response) {
       .select(
         'mp.cod_materia_prima',
         'mp.activo',
+        'mp.descripcion',
         { inactivo: db.raw('not mp.activo') },
         'mp.codigo_moneda',
         'mp.monto',

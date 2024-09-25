@@ -4,7 +4,7 @@ export type DetalleServicio = {
   cod_detalle_servicio: number;
   cod_herramienta: number;
   cod_usuario_creacion: number;
-  fecha_creacion: Date; 
+  fecha_creacion: Date;
   activo: boolean;
   cod_usuario_anulacion: number | null;
   fecha_anulacion: Date | null;
@@ -17,6 +17,7 @@ export type DetalleServicio = {
 
 // Esquema para la creación de DetalleServicio
 export const creacionDetalleServicio = z.object({
+  descripcion: z.string(),
   cod_herramienta: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   cod_usuario_creacion: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   fecha_creacion: z.union([z.string(), z.date()]).transform((val) => new Date(val)).default(() => new Date()),
