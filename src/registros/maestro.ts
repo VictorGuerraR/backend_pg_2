@@ -8,6 +8,8 @@ import {
   Maestro,
   CreacionM,
   DesactivacionM,
+  actualizacionMaestro,
+  ActualizacionM,
 } from '#types/maestro';
 import {
   DesactivacionDB,
@@ -22,6 +24,7 @@ function whereMaestro(params: any, query: Knex.QueryBuilder, prefix: string): Kn
   for (const [key, value] of Object.entries(params)) {
     if (!value) continue
     switch (key) {
+      case 'cod_maestro':
       case 'cod_usuario_creacion':
       case 'cod_usuario_anulacion':
         query.where(`${prefix}.${key}`, Number(value))
@@ -86,6 +89,17 @@ export async function obtenerRegistrosMaestros(req: Request, res: Response) {
   }
 }
 
+export async function obtenerEncabezadoMaestro(req: Request, res: Response) {
+  try {
+    const respuesta = await whereMaestro(req.query, db({ m: 'registros.maestro' }), 'm')
+    res.status(200).json(respuesta)
+    console.log({ code: 200, message: 'Respuesta exitosa en maestro:obtenerEncabezadoMaestro', scope: 'get' })
+  } catch (error) {
+    console.log(error)
+    res.status(418).json({ error })
+  }
+}
+
 export async function crearMaestro(req: Request, res: Response) {
   try {
     let respuesta
@@ -98,8 +112,30 @@ export async function crearMaestro(req: Request, res: Response) {
         .returning('cod_maestro')
     })
 
-    res.status(200).json({ respuesta })
+    res.status(200).json(respuesta)
     console.log({ code: 200, message: 'Respuesta exitosa en costos-fijos', scope: 'post' })
+  } catch (error) {
+    console.log(error)
+    res.status(418).json({ error })
+  }
+}
+
+export async function actualizarMaestro(req: Request, res: Response) {
+  try {
+    let respuesta
+    const { cod_maestro, ...maestro }: ActualizacionM = actualizacionMaestro
+      .parse({ cod_usuario_anulacion: req.usuario?.cod_usuario, ...req.body })
+
+    await db.transaction(async (trx) => {
+      // desactivacion de maestro
+      respuesta = await trx('registros.maestro')
+        .update(maestro)
+        .where({ cod_maestro })
+        .returning('cod_maestro')
+    })
+
+    res.status(200).json(respuesta)
+    console.log({ code: 200, message: 'Respuesta exitosa en maestro', scope: 'patch' })
   } catch (error) {
     console.log(error)
     res.status(418).json({ error })
@@ -144,7 +180,7 @@ export async function desactivarMaestro(req: Request, res: Response) {
         .returning('cod_maestro')
     })
 
-    res.status(200).json({ respuesta })
+    res.status(200).json(respuesta)
     console.log({ code: 200, message: 'Respuesta exitosa en maestro', scope: 'delete' })
   } catch (error) {
     console.log(error)

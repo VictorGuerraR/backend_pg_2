@@ -8,6 +8,8 @@ const router = Router()
 
 // MAESTRO
 router.get('/registros-maestro', middleware, maestro.obtenerRegistrosMaestros)
+router.get('/registros-maestro/encabezado', middleware, maestro.obtenerEncabezadoMaestro)
+router.patch('/registros-maestro', middleware, maestro.actualizarMaestro)
 router.post('/registros-maestro', middleware, maestro.crearMaestro)
 router.delete('/registros-maestro', middleware, maestro.desactivarMaestro)
 

@@ -20,11 +20,20 @@ export const creacionMaestro = z.object({
   cod_usuario_creacion: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   fecha_creacion: z.union([z.string(), z.date()]).transform((val) => new Date(val)).default(() => new Date()),
   activo: z.boolean().default(true),
+  descripcion: z.string(),
   monto_total: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   porcentaje_impuesto: z.union([z.string(), z.number()]).transform((val) => Number(val)).default(5),
   monto_impuesto: z.union([z.string(), z.number()]).transform((val) => Number(val)).default(0),
   precio_kw: z.union([z.string(), z.number()]).transform((val) => Number(val)).default(1),
   monto_ganacia: z.union([z.string(), z.number()]).transform((val) => Number(val)).default(25),
+  porcentaje_ganancia: z.union([z.string(), z.number()]).transform((val) => Number(val)).default(0)
+});
+
+export const actualizacionMaestro = z.object({
+  cod_maestro: z.union([z.string(), z.number()]).transform((val) => Number(val)),
+  descripcion: z.string(),
+  porcentaje_impuesto: z.union([z.string(), z.number()]).transform((val) => Number(val)).default(5),
+  precio_kw: z.union([z.string(), z.number()]).transform((val) => Number(val)).default(1),
   porcentaje_ganancia: z.union([z.string(), z.number()]).transform((val) => Number(val)).default(0)
 });
 
@@ -37,5 +46,6 @@ export const desactivacionMaestro = z.object({
 
 // Inferir los tipos desde los esquemas si es necesario
 export type CreacionM = z.infer<typeof creacionMaestro>;
+export type ActualizacionM = z.infer<typeof actualizacionMaestro>;
 export type DesactivacionM = z.infer<typeof desactivacionMaestro>;
 

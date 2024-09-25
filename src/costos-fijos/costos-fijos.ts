@@ -90,7 +90,7 @@ export async function crearCostosFijos(req: Request, res: Response) {
         .returning('cod_costo_fijo')
     })
 
-    res.status(200).json({ respuesta })
+    res.status(200).json(respuesta)
     console.log({ code: 200, message: 'Respuesta exitosa en costos-fijos', scope: 'post' })
   } catch (error) {
     console.log(error)
@@ -110,7 +110,7 @@ export async function actualizarCostosFijos(req: Request, res: Response) {
         .returning('cod_costo_fijo')
     })
 
-    res.status(200).json({ respuesta })
+    res.status(200).json(respuesta)
     console.log({ code: 200, message: 'Respuesta exitosa en costos-fijos', scope: 'patch' })
   } catch (error) {
     console.log(error)
@@ -134,7 +134,7 @@ export async function desactivarCostosFijos(req: Request, res: Response) {
         .returning('cod_costo_fijo')
     })
 
-    res.status(200).json({ respuesta })
+    res.status(200).json(respuesta)
     console.log({ code: 200, message: 'Respuesta exitosa en costos-fijos', scope: 'delete' })
   } catch (error) {
     console.log(error)

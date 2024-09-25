@@ -31,7 +31,7 @@ function whereDetalleBien(params: any, query: Knex.QueryBuilder, prefix: string)
 }
 
 const consultaDetalleBien = () => db({ db: 'registros.detalle_bien' })
-  .innerJoin({ uc: 'registros.usuarios' }, 'uc.cod_usuario_creacion', 'db.cod_usuario')
+  .innerJoin({ uc: 'registros.usuarios' }, 'uc.cod_usuario', 'db.cod_usuario_creacion')
   .innerJoin({ mp: 'registros.materia_prima' }, 'db.cod_materia_prima', 'mp.cod_materia_prima')
   .select(
     'db.activo',
@@ -40,6 +40,7 @@ const consultaDetalleBien = () => db({ db: 'registros.detalle_bien' })
     'db.cod_materia_prima',
     'db.codigo_moneda',
     'db.codigo_unidad',
+    'db.descripcion',
     'db.fecha_creacion',
     'db.monto_total',
     'db.unidad',
@@ -51,7 +52,7 @@ const consultaDetalleBien = () => db({ db: 'registros.detalle_bien' })
 export async function obtenerRegistrosDetalleBienes(req: Request, res: Response) {
   try {
     const respuesta: DetalleBien[] = await whereDetalleBien(req.query, consultaDetalleBien(), 'db')
-    res.status(200).json({ respuesta })
+    res.status(200).json(respuesta)
     console.log({ code: 200, message: 'Respuesta exitosa en detalle_bien', scope: 'get' })
   } catch (error) {
     console.log(error)
@@ -71,7 +72,7 @@ export async function crearDetalleBien(req: Request, res: Response) {
         .insert(detalleBien)
         .returning('cod_detalle_bien')
     })
-    res.status(200).json({ respuesta })
+    res.status(200).json(respuesta)
     console.log({ code: 200, message: 'Respuesta exitosa en detalle_bien', scope: 'post' })
   } catch (error) {
     console.log(error)
@@ -96,7 +97,7 @@ export async function desactivarDetalleBien(req: Request, res: Response) {
         .returning('cod_detalle_bien')
     })
 
-    res.status(200).json({ respuesta })
+    res.status(200).json(respuesta)
     console.log({ code: 200, message: 'Respuesta exitosa en detalle_bien', scope: 'delete' })
   } catch (error) {
     console.log(error)

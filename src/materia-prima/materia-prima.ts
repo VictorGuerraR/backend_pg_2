@@ -97,7 +97,7 @@ export async function crearMateriaPrima(req: Request, res: Response) {
         .returning('cod_materia_prima')
     })
 
-    res.status(200).json({ respuesta })
+    res.status(200).json(respuesta)
     console.log({ code: 200, message: 'Respuesta exitosa en materia-prima', scope: 'post' })
   } catch (error) {
     console.log(error)
@@ -116,7 +116,7 @@ export async function actualizarMateriaPrima(req: Request, res: Response) {
         .returning('cod_materia_prima')
     })
 
-    res.status(200).json({ respuesta })
+    res.status(200).json(respuesta)
     console.log({ code: 200, message: 'Respuesta exitosa en materia-prima', scope: 'patch' })
   } catch (error) {
     console.log(error)
@@ -139,7 +139,7 @@ export async function desactivarMateriaPrima(req: Request, res: Response) {
         .returning('cod_materia_prima')
     })
 
-    res.status(200).json({ respuesta })
+    res.status(200).json(respuesta)
     console.log({ code: 200, message: 'Respuesta exitosa en materia-prima', scope: 'delete' })
   } catch (error) {
     console.log(error)

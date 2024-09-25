@@ -30,7 +30,7 @@ function whereDetalleServicio(params: any, query: Knex.QueryBuilder, prefix: str
 }
 
 const consultaDetalleServicios = () => db({ ds: 'registros.detalle_servicio' })
-  .innerJoin({ uc: 'registros.usuarios' }, 'uc.cod_usuario_creacion', 'ds.cod_usuario')
+  .innerJoin({ uc: 'registros.usuarios' }, 'uc.cod_usuario', 'ds.cod_usuario_creacion')
   .select(
     'ds.activo',
     'ds.cod_detalle_servicio',
@@ -39,6 +39,7 @@ const consultaDetalleServicios = () => db({ ds: 'registros.detalle_servicio' })
     'ds.cod_usuario_creacion',
     'ds.codigo_moneda',
     'ds.codigo_tiempo_uso',
+    'ds.descripcion',
     'ds.fecha_creacion',
     'ds.monto_total',
     'ds.tiempo_uso',
@@ -47,8 +48,8 @@ const consultaDetalleServicios = () => db({ ds: 'registros.detalle_servicio' })
 
 export async function obtenerRegistrosDetalleServicios(req: Request, res: Response) {
   try {
-    const respuesta = await whereDetalleServicio(req.query, consultaDetalleServicios(), 's')
-    res.status(200).json({ respuesta })
+    const respuesta = await whereDetalleServicio(req.query, consultaDetalleServicios(), 'ds')
+    res.status(200).json( respuesta )
     console.log({ code: 200, message: 'Respuesta exitosa en detalle_servicio', scope: 'get' })
   } catch (error) {
     console.log(error)
@@ -68,7 +69,7 @@ export async function crearDetalleServicio(req: Request, res: Response) {
         .returning('cod_detalle_servicio')
     })
 
-    res.status(200).json({ respuesta })
+    res.status(200).json(respuesta )
     console.log({ code: 200, message: 'Respuesta exitosa en detalle_servicio', scope: 'post' })
   } catch (error) {
     console.log(error)
@@ -89,7 +90,7 @@ export async function desactivarDetalleServicio(req: Request, res: Response) {
         .where({ cod_detalle_servicio })
         .returning('cod_detalle_servicio')
     })
-    res.status(200).json({ respuesta })
+    res.status(200).json( respuesta )
     console.log({ code: 200, message: 'Respuesta exitosa en detalle_servicio', scope: 'delete' })
   } catch (error) {
     console.log(error)

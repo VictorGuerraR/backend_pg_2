@@ -119,7 +119,7 @@ export async function crearHerramienta(req: Request, res: Response) {
         .returning('cod_herramienta')
     })
 
-    res.status(200).json({ respuesta })
+    res.status(200).json(respuesta)
     console.log({ code: 200, message: 'Respuesta exitosa en herramientas', scope: 'post' })
   } catch (error) {
     console.log(error)
@@ -139,7 +139,7 @@ export async function actualizarHerramienta(req: Request, res: Response) {
         .returning('cod_herramienta')
     })
 
-    res.status(200).json({ respuesta })
+    res.status(200).json(respuesta)
     console.log({ code: 200, message: 'Respuesta exitosa en herramientas', scope: 'patch' })
   } catch (error) {
     console.log(error)
@@ -163,7 +163,7 @@ export async function desactivarHerramienta(req: Request, res: Response) {
         .returning('cod_herramienta')
     })
 
-    res.status(200).json({ respuesta })
+    res.status(200).json(respuesta)
     console.log({ code: 200, message: 'Respuesta exitosa en herramientas', scope: 'delete' })
   } catch (error) {
     console.log(error)
