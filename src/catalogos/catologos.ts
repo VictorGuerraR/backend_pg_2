@@ -91,3 +91,38 @@ export async function materiaPrima(req: Request, res: Response) {
     res.status(418).json({ error })
   }
 }
+
+export async function costosFijos(req: Request, res: Response) {
+  try {
+
+    const [{ costos }] = await db
+      .select({
+        costos:
+          db.raw(`
+        json_agg(
+          json_build_object(
+            'codigo_moneda', codigo_moneda, 
+            'costo_hora', costo_hora
+            )
+          )
+        `)
+      }
+      )
+      .from(
+        db('registros.costo_fijos as cs')
+          .select(
+            'cs.codigo_moneda',
+            { costo_hora: db.raw('(SUM(cs.monto_total) / 720)') }
+          )
+          .where('cs.activo', true)
+          .groupBy('cs.codigo_moneda')
+          .as('subquery')
+      );
+
+    res.status(200).json(costos)
+    console.log({ code: 200, message: 'Respuesta exitosa en catalogos:costosFijos', scope: 'get' })
+  } catch (error) {
+    console.log(error)
+    res.status(418).json({ error })
+  }
+}

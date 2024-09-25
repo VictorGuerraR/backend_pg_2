@@ -7,6 +7,7 @@ router.get('/catalogo/usuarios', middleware, catalogos.usuarios)
 router.get('/catalogo/tipoDepreciacion', middleware, catalogos.tipoDepreciacion)
 router.get('/catalogo/herramientas', middleware, catalogos.herramientas)
 router.get('/catalogo/materiasPrimas', middleware, catalogos.materiaPrima)
+router.get('/catalogo/costosFijos', middleware, catalogos.costosFijos)
 
 
 export default router
