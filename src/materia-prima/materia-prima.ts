@@ -54,8 +54,8 @@ const consultaMateriasPrimas = () => db({ mp: 'registros.materia_prima' })
     'mp.fecha_creacion',
     'mp.monto',
     { usuario_creacion: db.raw("concat(uc.nombres, ' ', uc.apellidos)") },
-    { ingresos: db.raw('sum(case when mmp.cantidad >= 0 then mmp.cantidad else 0 end)') },
-    { egresos: db.raw('sum(case when mmp.cantidad < 0 then mmp.cantidad else 0 end)') }
+    { ingresos: db.raw('sum(case when mmp.cantidad >= 0 and mmp.activo = true then mmp.cantidad else 0 end)') },
+    { egresos: db.raw('sum(case when mmp.cantidad < 0 and mmp.activo = true then mmp.cantidad else 0 end)') }
   )
   .groupBy(
     'mp.cod_materia_prima',

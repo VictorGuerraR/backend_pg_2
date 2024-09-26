@@ -85,7 +85,7 @@ export async function crearDetalleBien(req: Request, res: Response) {
           cod_usuario_creacion: req.usuario?.cod_usuario,
           codigo_unidad: detalleBien.codigo_unidad,
           cod_materia_prima: detalleBien.cod_materia_prima,
-          cantidad: detalleBien.unidad
+          cantidad: -detalleBien.unidad
         }
       )
 

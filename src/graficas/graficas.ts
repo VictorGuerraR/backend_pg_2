@@ -1,16 +1,8 @@
+import dayjs from 'dayjs';
 import db from '#conexion';
 import { Knex } from 'knex';
 import { Request, Response } from 'express';
-import dayjs from 'dayjs';
-
-interface Stat {
-  title: string;
-  amount: string;
-  progress: {
-    value: number;
-  };
-  color: string;
-}
+import { Stat, maxValues, StatKey } from './typesGraficas';
 
 function whereGraficas(params: any, query: Knex.QueryBuilder, prefix: string): Knex.QueryBuilder {
   for (const [key, value] of Object.entries(params)) {
@@ -53,15 +45,6 @@ const consultaGraficasEncabezados = () => db({ m: 'registros.maestro' })
 
 
 function parseDataToStats(data: any) {
-  type StatKey = 'Total Ganancia' | 'Total Impuesto' | 'Monto Total Servicio' | 'Monto Total Bien';
-
-  const maxValues: Record<StatKey, number> = {
-    "Total Ganancia": 2000,
-    "Total Impuesto": 600,
-    "Monto Total Servicio": 1500,
-    "Monto Total Bien": 500,
-  };
-
   const stats: Stat[] = Object.entries(data).map(([key, value]) => {
     const maxValue = maxValues[key as StatKey] || 1;
     const currentValue = parseFloat(value as string) || 0;
@@ -79,7 +62,7 @@ function parseDataToStats(data: any) {
         color = 'bg-orange-50';
         break;
       case 'Monto Total Bien':
-        color = 'bg-purple-50';
+        color = 'bg-cyan-50';
         break;
     }
 
