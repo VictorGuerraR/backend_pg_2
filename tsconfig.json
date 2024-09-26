@@ -40,6 +40,9 @@
       "#costosFijos/*": [
         "src/costos-fijos/*"
       ],
+      "#graficas/*": [
+        "src/graficas/*"
+      ],
       "#herramientas/*": [
         "src/herramientas/*"
       ],

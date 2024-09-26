@@ -119,12 +119,13 @@ export async function desactivarDetalleBien(req: Request, res: Response) {
 
       const { cod_detalle_bien: codDetalleBien, ...movimientoMP }: DesactivacionMovimientoMP =
         desactivacionMovimientoMateriaPrima.parse({
+          cod_detalle_bien,
           cod_usuario_anulacion: req.usuario?.cod_usuario
         })
 
-        await trx('registros.movimiento_materia_prima')
+      await trx('registros.movimiento_materia_prima')
         .update(movimientoMP)
-        .where({cod_detalle_bien})
+        .where({ cod_detalle_bien })
     })
 
     res.status(200).json(respuesta)

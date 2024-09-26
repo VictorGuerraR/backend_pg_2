@@ -50,20 +50,20 @@ function whereMaestro(params: any, query: Knex.QueryBuilder, prefix: string): Kn
 const consultaMaestro = () => db({ m: 'registros.maestro' })
   .innerJoin({ uc: 'registros.usuarios' }, 'm.cod_usuario_creacion', 'uc.cod_usuario')
   .select(
-    'm.cod_maestro',
-    'm.cod_usuario_creacion',
-    'm.fecha_creacion',
     'm.activo',
+    'm.cod_maestro',
     'm.cod_usuario_anulacion',
-    'm.fecha_anulacion',
-    'm.descripcion',
+    'm.cod_usuario_creacion',
     'm.codigo_moneda',
-    'm.monto_total',
-    'm.porcentaje_impuesto',
-    'm.monto_impuesto',
-    'm.precio_kw',
+    'm.descripcion',
+    'm.fecha_anulacion',
+    'm.fecha_creacion',
     'm.monto_ganacia',
+    'm.monto_impuesto',
+    'm.monto_total',
     'm.porcentaje_ganancia',
+    'm.porcentaje_impuesto',
+    'm.precio_kw',
     { usuario_creacion: db.raw("concat(uc.nombres, ' ', uc.apellidos)") },
   )
   .groupBy(
