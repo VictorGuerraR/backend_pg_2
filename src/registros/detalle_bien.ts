@@ -8,6 +8,12 @@ import {
   creacionDetalleBien,
   desactivacionDetalleBien
 } from '#types/detalleBien';
+import {
+  CreacionMovimientoMP,
+  DesactivacionMovimientoMP,
+  creacionMovimientoMateriaPrima,
+  desactivacionMovimientoMateriaPrima
+} from '#types/movimientoMateriaPrima';
 
 function whereDetalleBien(params: any, query: Knex.QueryBuilder, prefix: string): Knex.QueryBuilder {
   for (const [key, value] of Object.entries(params)) {
@@ -49,7 +55,6 @@ const consultaDetalleBien = () => db({ db: 'registros.detalle_bien' })
   )
   .orderBy('db.cod_detalle_bien', 'desc')
 
-
 export async function obtenerRegistrosDetalleBienes(req: Request, res: Response) {
   try {
     const respuesta: DetalleBien[] = await whereDetalleBien(req.query, consultaDetalleBien(), 'db')
@@ -72,6 +77,21 @@ export async function crearDetalleBien(req: Request, res: Response) {
       respuesta = await trx('registros.detalle_bien')
         .insert(detalleBien)
         .returning('cod_detalle_bien')
+
+      const [{ cod_detalle_bien }] = respuesta
+      const movimientoMP: CreacionMovimientoMP = creacionMovimientoMateriaPrima.parse(
+        {
+          cod_detalle_bien,
+          cod_usuario_creacion: req.usuario?.cod_usuario,
+          codigo_unidad: detalleBien.codigo_unidad,
+          cod_materia_prima: detalleBien.cod_materia_prima,
+          cantidad: detalleBien.unidad
+        }
+      )
+
+      await trx('registros.movimiento_materia_prima')
+        .insert(movimientoMP)
+        .returning('cod_registro_materia_prima')
     })
     res.status(200).json(respuesta)
     console.log({ code: 200, message: 'Respuesta exitosa en detalle_bien', scope: 'post' })
@@ -96,6 +116,15 @@ export async function desactivarDetalleBien(req: Request, res: Response) {
         .update(detalleBien)
         .where({ cod_detalle_bien })
         .returning('cod_detalle_bien')
+
+      const { cod_detalle_bien: codDetalleBien, ...movimientoMP }: DesactivacionMovimientoMP =
+        desactivacionMovimientoMateriaPrima.parse({
+          cod_usuario_anulacion: req.usuario?.cod_usuario
+        })
+
+        await trx('registros.movimiento_materia_prima')
+        .update(movimientoMP)
+        .where({cod_detalle_bien})
     })
 
     res.status(200).json(respuesta)

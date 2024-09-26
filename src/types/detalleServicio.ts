@@ -26,6 +26,9 @@ export const creacionDetalleServicio = z.object({
   codigo_tiempo_uso: z.string().default("H"),
   monto_total: z.union([z.string(), z.number()]).transform((val) => Number(val)),
   cod_maestro: z.union([z.string(), z.number()]).transform((val) => Number(val)),
+  total_consumo_energetico: z.union([z.string(), z.number()]).transform((val) => Number(val)),
+  total_depreciacion: z.union([z.string(), z.number()]).transform((val) => Number(val)),
+  total_horas_servicio: z.union([z.string(), z.number()]).transform((val) => Number(val)),
 });
 
 // Esquema para la desactivación de DetalleServicio

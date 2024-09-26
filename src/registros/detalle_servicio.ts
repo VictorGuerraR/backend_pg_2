@@ -43,6 +43,9 @@ const consultaDetalleServicios = () => db({ ds: 'registros.detalle_servicio' })
     'ds.fecha_creacion',
     'ds.monto_total',
     'ds.tiempo_uso',
+    'ds.total_consumo_energetico',
+    'ds.total_depreciacion',
+    'ds.total_horas_servicio',
     { usuario_creacion: db.raw("concat(uc.nombres, ' ', uc.apellidos)") },
   )
   .orderBy('ds.cod_detalle_servicio', 'desc')
@@ -51,7 +54,7 @@ const consultaDetalleServicios = () => db({ ds: 'registros.detalle_servicio' })
 export async function obtenerRegistrosDetalleServicios(req: Request, res: Response) {
   try {
     const respuesta = await whereDetalleServicio(req.query, consultaDetalleServicios(), 'ds')
-    res.status(200).json( respuesta )
+    res.status(200).json(respuesta)
     console.log({ code: 200, message: 'Respuesta exitosa en detalle_servicio', scope: 'get' })
   } catch (error) {
     console.log(error)
@@ -71,7 +74,7 @@ export async function crearDetalleServicio(req: Request, res: Response) {
         .returning('cod_detalle_servicio')
     })
 
-    res.status(200).json(respuesta )
+    res.status(200).json(respuesta)
     console.log({ code: 200, message: 'Respuesta exitosa en detalle_servicio', scope: 'post' })
   } catch (error) {
     console.log(error)
@@ -92,7 +95,7 @@ export async function desactivarDetalleServicio(req: Request, res: Response) {
         .where({ cod_detalle_servicio })
         .returning('cod_detalle_servicio')
     })
-    res.status(200).json( respuesta )
+    res.status(200).json(respuesta)
     console.log({ code: 200, message: 'Respuesta exitosa en detalle_servicio', scope: 'delete' })
   } catch (error) {
     console.log(error)

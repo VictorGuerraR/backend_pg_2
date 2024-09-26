@@ -19,6 +19,10 @@ import {
   desactivacionDetalleServicio,
   DesactivacionDS
 } from '#types/detalleServicio';
+import {
+  DesactivacionMovimientoMP,
+  desactivacionMovimientoMateriaPrima
+} from '#types/movimientoMateriaPrima';
 
 function whereMaestro(params: any, query: Knex.QueryBuilder, prefix: string): Knex.QueryBuilder {
   for (const [key, value] of Object.entries(params)) {
@@ -164,9 +168,19 @@ export async function desactivarMaestro(req: Request, res: Response) {
 
     await db.transaction(async (trx) => {
       // desactivacion de todos los detalles bien pertenecientes a ese maestro 
-      await trx('registros.detalle_bien')
+      const [{ cod_detalle_bien }] = await trx('registros.detalle_bien')
         .update(detalleBien)
         .where({ cod_maestro })
+        .returning('cod_detalle_bien')
+
+      const { cod_detalle_bien: codDetalleBien, ...movimientoMP }: DesactivacionMovimientoMP =
+        desactivacionMovimientoMateriaPrima.parse({
+          cod_usuario_anulacion: req.usuario?.cod_usuario
+        })
+
+      await trx('registros.movimiento_materia_prima')
+        .update(movimientoMP)
+        .where({ cod_detalle_bien })
 
       // desactivacion de todos los detalles servicio pertenecientes a ese maestro 
       await trx('registros.detalle_servicio')
