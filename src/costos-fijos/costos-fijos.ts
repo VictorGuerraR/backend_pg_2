@@ -1,8 +1,8 @@
-import db from '#conexion'
-import paginate from '#pagination'
+import logger from '#logs';
+import db from '#conexion';
 import { Knex } from 'knex';
+import paginate from '#pagination';
 import { Request, Response } from 'express';
-import logger from '#logs'
 import {
   ActualizacionCF,
   CreacionCF,
@@ -72,7 +72,7 @@ export async function obtenerCostosFijos(req: Request, res: Response) {
     res.status(200).json({ respuesta });
     logger.info({
       message: 'Respuesta exitosa en costos-fijos',
-      labels: { code: 200, scope: 'get' }
+      labels: { code: 200, scope: 'get', ususario: req.usuario?.usuario }
     });
   } catch (error) {
     logger.error({
@@ -97,9 +97,15 @@ export async function crearCostosFijos(req: Request, res: Response) {
     })
 
     res.status(200).json(respuesta)
-    console.log({ code: 200, message: 'Respuesta exitosa en costos-fijos', scope: 'post' })
+    logger.info({
+      message: 'Respuesta exitosa en costos-fijos',
+      labels: { code: 200, scope: 'post', ususario: req.usuario?.usuario }
+    });
   } catch (error) {
-    console.log(error)
+    logger.info({
+      message: 'Respuesta exitosa en costos-fijos',
+      labels: { code: 418, scope: 'post', ususario: req.usuario?.usuario, error }
+    });
     res.status(418).json({ error })
   }
 }
@@ -117,9 +123,15 @@ export async function actualizarCostosFijos(req: Request, res: Response) {
     })
 
     res.status(200).json(respuesta)
-    console.log({ code: 200, message: 'Respuesta exitosa en costos-fijos', scope: 'patch' })
+    logger.info({
+      message: 'Respuesta exitosa en costos-fijos',
+      labels: { code: 200, scope: 'patch', ususario: req.usuario?.usuario }
+    });
   } catch (error) {
-    console.log(error)
+    logger.info({
+      message: 'Respuesta con error en costos-fijos',
+      labels: { code: 418, scope: 'patch', ususario: req.usuario?.usuario, error }
+    });
     res.status(418).json({ error })
   }
 }
@@ -141,9 +153,15 @@ export async function desactivarCostosFijos(req: Request, res: Response) {
     })
 
     res.status(200).json(respuesta)
-    console.log({ code: 200, message: 'Respuesta exitosa en costos-fijos', scope: 'delete' })
+    logger.info({
+      message: 'Respuesta exitosa en costos-fijos',
+      labels: { code: 200, scope: 'delete', ususario: req.usuario?.usuario }
+    });
   } catch (error) {
-    console.log(error)
+    logger.info({
+      message: 'Respuesta con error en costos-fijos',
+      labels: { code: 418, scope: 'delete', ususario: req.usuario?.usuario, error }
+    });
     res.status(418).json({ error })
   }
 }

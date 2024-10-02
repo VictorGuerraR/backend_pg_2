@@ -1,9 +1,9 @@
 import db from '#conexion'
+import logger from '#logs';
 import { Knex } from 'knex';
 import paginate from '#pagination'
 import { Request, Response } from 'express';
 import {
-  Herramienta,
   CreacionH,
   ActualizacionH,
   DesactivacionH,
@@ -99,9 +99,15 @@ export async function obtenerHerramientas(req: Request, res: Response) {
     });
 
     res.status(200).json({ respuesta })
-    console.log({ code: 200, message: 'Respuesta exitosa en herramientas', scope: 'get' })
+    logger.info({
+      message: 'Respuesta exitosa en herramientas',
+      labels: { code: 200, scope: 'get', ususario: req.usuario?.usuario }
+    });
   } catch (error) {
-    console.log(error)
+    logger.info({
+      message: 'Respuesta con errores en herramientas',
+      labels: { code: 418, scope: 'get', ususario: req.usuario?.usuario, error }
+    });
     res.status(418).json({ error })
   }
 }
@@ -120,10 +126,16 @@ export async function crearHerramienta(req: Request, res: Response) {
     })
 
     res.status(200).json(respuesta)
-    console.log({ code: 200, message: 'Respuesta exitosa en herramientas', scope: 'post' })
+    logger.info({
+      message: 'Respuesta exitosa en herramientas',
+      labels: { code: 200, scope: 'post', ususario: req.usuario?.usuario }
+    });
   } catch (error) {
-    console.log(error)
     res.status(418).json({ error })
+    logger.info({
+      message: 'Respuesta con errores en herramientas',
+      labels: { code: 418, scope: 'post', ususario: req.usuario?.usuario, error }
+    });
   }
 }
 
@@ -140,10 +152,16 @@ export async function actualizarHerramienta(req: Request, res: Response) {
     })
 
     res.status(200).json(respuesta)
-    console.log({ code: 200, message: 'Respuesta exitosa en herramientas', scope: 'patch' })
+    logger.info({
+      message: 'Respuesta exitosa en herramientas',
+      labels: { code: 200, scope: 'patch', ususario: req.usuario?.usuario }
+    });
   } catch (error) {
-    console.log(error)
     res.status(418).json({ error })
+    logger.info({
+      message: 'Respuesta con errores en herramientas',
+      labels: { code: 418, scope: 'patch', ususario: req.usuario?.usuario, error }
+    });
   }
 }
 
@@ -164,9 +182,15 @@ export async function desactivarHerramienta(req: Request, res: Response) {
     })
 
     res.status(200).json(respuesta)
-    console.log({ code: 200, message: 'Respuesta exitosa en herramientas', scope: 'delete' })
+    logger.info({
+      message: 'Respuesta exitosa en herramientas',
+      labels: { code: 200, scope: 'delete', ususario: req.usuario?.usuario }
+    });
   } catch (error) {
-    console.log(error)
     res.status(418).json({ error })
+    logger.info({
+      message: 'Respuesta con errores en herramientas',
+      labels: { code: 418, scope: 'delete', ususario: req.usuario?.usuario, error }
+    });
   }
 }

@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import logger from '#logs';
 import db from '#conexion';
 import { Knex } from 'knex';
 import { Request, Response } from 'express';
@@ -85,9 +86,15 @@ export async function obtenerGraficasEncabezado(req: Request, res: Response) {
     const [data] = await whereGraficas({ fecha_creacion }, consultaGraficasEncabezados(), 'm')
     const stats = parseDataToStats(data);
     res.status(200).json(stats);
-    console.log({ code: 200, message: 'Respuesta exitosa en graficas:obtenerGraficasEncabezado', scope: 'get' });
+    logger.info({
+      message: 'Respuesta exitosa en graficas:obtenerGraficasEncabezado',
+      labels: { code: 200, scope: 'get', ususario: req.usuario?.usuario }
+    });
   } catch (error) {
-    console.log(error);
-    res.status(418).json({ error });
+    logger.info({
+      message: 'Respuesta con error en graficas:obtenerGraficasEncabezado',
+      labels: { code: 418, scope: 'get', ususario: req.usuario?.usuario, error }
+    });
+    res.status(418).json({ error })
   }
 }

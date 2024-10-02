@@ -1,4 +1,5 @@
 import db from '#conexion'
+import logger from '#logs';
 import { Request, Response } from 'express';
 
 export async function usuarios(req: Request, res: Response) {
@@ -16,9 +17,15 @@ export async function usuarios(req: Request, res: Response) {
     // .where('u.activo', true)
 
     res.status(200).json(respuesta)
-    console.log({ code: 200, message: 'Respuesta exitosa en catalogos:usuarios', scope: 'get' })
+    logger.info({
+      message: 'Respuesta exitosa en catalogos:usuarios',
+      labels: { code: 200, scope: 'get', ususario: req.usuario?.usuario }
+    });
   } catch (error) {
-    console.log(error)
+    logger.info({
+      message: 'Respuesta con error en catalogos:usuarios',
+      labels: { code: 418, scope: 'get', ususario: req.usuario?.usuario, error }
+    });
     res.status(418).json({ error })
   }
 }
@@ -33,9 +40,15 @@ export async function tipoDepreciacion(req: Request, res: Response) {
       )
 
     res.status(200).json(respuesta)
-    console.log({ code: 200, message: 'Respuesta exitosa en catalogos:tipoDepreciacion', scope: 'get' })
+    logger.info({
+      message: 'Respuesta exitosa en catalogos:tipoDepreciacion',
+      labels: { code: 200, scope: 'get', ususario: req.usuario?.usuario }
+    });
   } catch (error) {
-    console.log(error)
+    logger.info({
+      message: 'Respuesta con error en catalogos:tipoDepreciacion',
+      labels: { code: 418, scope: 'get', ususario: req.usuario?.usuario, error }
+    });
     res.status(418).json({ error })
   }
 }
@@ -58,9 +71,15 @@ export async function herramientas(req: Request, res: Response) {
     // .where('h.activo', true)
 
     res.status(200).json(respuesta)
-    console.log({ code: 200, message: 'Respuesta exitosa en catalogos:herramientas', scope: 'get' })
+    logger.info({
+      message: 'Respuesta exitosa en catalogos:herramientas',
+      labels: { code: 200, scope: 'get', ususario: req.usuario?.usuario }
+    });
   } catch (error) {
-    console.log(error)
+    logger.info({
+      message: 'Respuesta con error en catalogos:herramientas',
+      labels: { code: 418, scope: 'get', ususario: req.usuario?.usuario, error }
+    });
     res.status(418).json({ error })
   }
 }
@@ -85,9 +104,15 @@ export async function materiaPrima(req: Request, res: Response) {
       .orderBy('mp.cod_materia_prima', 'desc')
 
     res.status(200).json(respuesta)
-    console.log({ code: 200, message: 'Respuesta exitosa en catalogos:materiaPrima', scope: 'get' })
+    logger.info({
+      message: 'Respuesta exitosa en catalogos:materiaPrima',
+      labels: { code: 200, scope: 'get', ususario: req.usuario?.usuario }
+    });
   } catch (error) {
-    console.log(error)
+    logger.info({
+      message: 'Respuesta con error en catalogos:materiaPrima',
+      labels: { code: 418, scope: 'get', ususario: req.usuario?.usuario, error }
+    });
     res.status(418).json({ error })
   }
 }
@@ -120,9 +145,15 @@ export async function costosFijos(req: Request, res: Response) {
       );
 
     res.status(200).json(costos)
-    console.log({ code: 200, message: 'Respuesta exitosa en catalogos:costosFijos', scope: 'get' })
+    logger.info({
+      message: 'Respuesta exitosa en catalogos:costosFijos',
+      labels: { code: 200, scope: 'get', ususario: req.usuario?.usuario }
+    });
   } catch (error) {
-    console.log(error)
+    logger.info({
+      message: 'Respuesta con error en catalogos:costosFijos',
+      labels: { code: 418, scope: 'get', ususario: req.usuario?.usuario, error }
+    });
     res.status(418).json({ error })
   }
 }

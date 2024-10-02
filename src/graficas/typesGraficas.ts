@@ -10,8 +10,8 @@ export interface Stat {
 export type StatKey = 'Total Ganancia' | 'Total Impuesto' | 'Monto Total Servicio' | 'Monto Total Bien';
 
 export const maxValues: Record<StatKey, number> = {
-  "Total Ganancia": 2000,
+  "Total Ganancia": 4000,
   "Total Impuesto": 600,
-  "Monto Total Servicio": 1500,
-  "Monto Total Bien": 500,
+  "Monto Total Servicio": 4000,
+  "Monto Total Bien": 4000,
 };
