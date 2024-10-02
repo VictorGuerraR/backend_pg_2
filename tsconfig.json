@@ -52,6 +52,9 @@
       "#login/*": [
         "src/login/*"
       ],
+      "#logs": [
+        "src/winston/conf.ts"
+      ],
       "#materiasPrimas/*": [
         "src/materia-prima/*"
       ],

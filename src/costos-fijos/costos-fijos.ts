@@ -2,6 +2,7 @@ import db from '#conexion'
 import paginate from '#pagination'
 import { Knex } from 'knex';
 import { Request, Response } from 'express';
+import logger from '#logs'
 import {
   ActualizacionCF,
   CreacionCF,
@@ -36,7 +37,6 @@ function whereCostosFijos(params: any, query: Knex.QueryBuilder, prefix: string)
   return query
 }
 
-
 const consultaCostosFijos = () => db({ cf: 'registros.costo_fijos' })
   .innerJoin({ uc: 'registros.usuarios' }, 'uc.cod_usuario', 'cf.cod_usuario_creacion')
   .select(
@@ -69,11 +69,17 @@ export async function obtenerCostosFijos(req: Request, res: Response) {
       pageSize
     });
 
-    res.status(200).json({ respuesta })
-    console.log({ code: 200, message: 'Respuesta exitosa en costos-fijos', scope: 'get' })
+    res.status(200).json({ respuesta });
+    logger.info({
+      message: 'Respuesta exitosa en costos-fijos',
+      labels: { code: 200, scope: 'get' }
+    });
   } catch (error) {
-    console.log(error)
-    res.status(418).json({ error })
+    logger.error({
+      message: 'Respuesta con error en costos-fijos',
+      labels: { code: 200, scope: 'get', error }
+    });
+    res.status(500).json({ error: 'Ocurrió un error al obtener los costos fijos' });
   }
 }
 
