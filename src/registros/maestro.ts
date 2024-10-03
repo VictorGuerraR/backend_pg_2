@@ -93,7 +93,7 @@ export async function obtenerRegistrosMaestros(req: Request, res: Response) {
     });
   } catch (error) {
     res.status(418).json({ error })
-    logger.info({
+    logger.error({
       message: 'Respuesta con errores en maestro',
       labels: { code: 418, scope: 'get', ususario: req.usuario?.usuario, error }
     });
@@ -110,7 +110,7 @@ export async function obtenerEncabezadoMaestro(req: Request, res: Response) {
     });
   } catch (error) {
     res.status(418).json({ error })
-    logger.info({
+    logger.error({
       message: 'Respuesta con errores en maestro:obtenerEncabezadoMaestro',
       labels: { code: 418, scope: 'get', ususario: req.usuario?.usuario, error }
     });
@@ -136,7 +136,7 @@ export async function crearMaestro(req: Request, res: Response) {
     });
   } catch (error) {
     res.status(418).json({ error })
-    logger.info({
+    logger.error({
       message: 'Respuesta con errores en maestro',
       labels: { code: 418, scope: 'post', ususario: req.usuario?.usuario, error }
     });
@@ -164,7 +164,7 @@ export async function actualizarMaestro(req: Request, res: Response) {
     });
   } catch (error) {
     res.status(418).json({ error })
-    logger.info({
+    logger.error({
       message: 'Respuesta con errores en maestro',
       labels: { code: 418, scope: 'patch', ususario: req.usuario?.usuario, error }
     });
@@ -226,7 +226,7 @@ export async function desactivarMaestro(req: Request, res: Response) {
     });
   } catch (error) {
     res.status(418).json({ error })
-    logger.info({
+    logger.error({
       message: 'Respuesta con errores en maestro',
       labels: { code: 418, scope: 'delete', ususario: req.usuario?.usuario, error }
     });

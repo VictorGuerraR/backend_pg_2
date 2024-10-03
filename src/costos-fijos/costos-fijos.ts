@@ -75,11 +75,11 @@ export async function obtenerCostosFijos(req: Request, res: Response) {
       labels: { code: 200, scope: 'get', ususario: req.usuario?.usuario }
     });
   } catch (error) {
+    res.status(418).json({ error: 'Ocurrió un error al obtener los costos fijos' });
     logger.error({
       message: 'Respuesta con error en costos-fijos',
-      labels: { code: 200, scope: 'get', error }
+      labels: { code: 418, scope: 'get', error }
     });
-    res.status(500).json({ error: 'Ocurrió un error al obtener los costos fijos' });
   }
 }
 
@@ -102,11 +102,11 @@ export async function crearCostosFijos(req: Request, res: Response) {
       labels: { code: 200, scope: 'post', ususario: req.usuario?.usuario }
     });
   } catch (error) {
-    logger.info({
+    res.status(418).json({ error })
+    logger.error({
       message: 'Respuesta exitosa en costos-fijos',
       labels: { code: 418, scope: 'post', ususario: req.usuario?.usuario, error }
     });
-    res.status(418).json({ error })
   }
 }
 
@@ -128,11 +128,11 @@ export async function actualizarCostosFijos(req: Request, res: Response) {
       labels: { code: 200, scope: 'patch', ususario: req.usuario?.usuario }
     });
   } catch (error) {
-    logger.info({
+    res.status(418).json({ error })
+    logger.error({
       message: 'Respuesta con error en costos-fijos',
       labels: { code: 418, scope: 'patch', ususario: req.usuario?.usuario, error }
     });
-    res.status(418).json({ error })
   }
 }
 
@@ -158,10 +158,10 @@ export async function desactivarCostosFijos(req: Request, res: Response) {
       labels: { code: 200, scope: 'delete', ususario: req.usuario?.usuario }
     });
   } catch (error) {
-    logger.info({
+    res.status(418).json({ error })
+    logger.error({
       message: 'Respuesta con error en costos-fijos',
       labels: { code: 418, scope: 'delete', ususario: req.usuario?.usuario, error }
     });
-    res.status(418).json({ error })
   }
 }

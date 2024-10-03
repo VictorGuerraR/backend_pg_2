@@ -1,4 +1,5 @@
 import db from '#conexion'
+import logger from '#logs';
 import { Knex } from 'knex';
 import { Request, Response } from 'express';
 import {
@@ -59,10 +60,16 @@ export async function obtenerRegistrosDetalleBienes(req: Request, res: Response)
   try {
     const respuesta: DetalleBien[] = await whereDetalleBien(req.query, consultaDetalleBien(), 'db')
     res.status(200).json(respuesta)
-    console.log({ code: 200, message: 'Respuesta exitosa en detalle_bien', scope: 'get' })
+    logger.info({
+      message: 'Respuesta exitosa en detalle_bien',
+      labels: { code: 200, scope: 'get', ususario: req.usuario?.usuario }
+    });
   } catch (error) {
-    console.log(error)
     res.status(418).json({ error })
+    logger.error({
+      message: 'Respuesta con errores en detalle_bien',
+      labels: { code: 200, scope: 'get', ususario: req.usuario?.usuario }
+    });
   }
 }
 
@@ -94,10 +101,16 @@ export async function crearDetalleBien(req: Request, res: Response) {
         .returning('cod_registro_materia_prima')
     })
     res.status(200).json(respuesta)
-    console.log({ code: 200, message: 'Respuesta exitosa en detalle_bien', scope: 'post' })
+    logger.info({
+      message: 'Respuesta exitosa en detalle_bien',
+      labels: { code: 200, scope: 'post', ususario: req.usuario?.usuario }
+    });
   } catch (error) {
-    console.log(error)
     res.status(418).json({ error })
+    logger.error({
+      message: 'Respuesta con errores en detalle_bien',
+      labels: { code: 200, scope: 'post', ususario: req.usuario?.usuario }
+    });
   }
 }
 
@@ -129,9 +142,15 @@ export async function desactivarDetalleBien(req: Request, res: Response) {
     })
 
     res.status(200).json(respuesta)
-    console.log({ code: 200, message: 'Respuesta exitosa en detalle_bien', scope: 'delete' })
+    logger.info({
+      message: 'Respuesta exitosa en detalle_bien',
+      labels: { code: 200, scope: 'delete', ususario: req.usuario?.usuario }
+    });
   } catch (error) {
-    console.log(error)
     res.status(418).json({ error })
+    logger.error({
+      message: 'Respuesta con errores en detalle_bien',
+      labels: { code: 200, scope: 'delete', ususario: req.usuario?.usuario }
+    });
   }
 }

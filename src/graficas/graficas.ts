@@ -91,10 +91,10 @@ export async function obtenerGraficasEncabezado(req: Request, res: Response) {
       labels: { code: 200, scope: 'get', ususario: req.usuario?.usuario }
     });
   } catch (error) {
+    res.status(418).json({ error })
     logger.info({
       message: 'Respuesta con error en graficas:obtenerGraficasEncabezado',
       labels: { code: 418, scope: 'get', ususario: req.usuario?.usuario, error }
     });
-    res.status(418).json({ error })
   }
 }

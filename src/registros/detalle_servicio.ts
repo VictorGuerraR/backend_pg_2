@@ -1,4 +1,5 @@
-import db from '#conexion'
+import db from '#conexion';
+import logger from '#logs';
 import { Knex } from 'knex';
 import { Request, Response } from 'express';
 import {
@@ -55,10 +56,16 @@ export async function obtenerRegistrosDetalleServicios(req: Request, res: Respon
   try {
     const respuesta = await whereDetalleServicio(req.query, consultaDetalleServicios(), 'ds')
     res.status(200).json(respuesta)
-    console.log({ code: 200, message: 'Respuesta exitosa en detalle_servicio', scope: 'get' })
+    logger.info({
+      message: 'Respuesta exitosa en detalle_servicio',
+      labels: { code: 200, scope: 'get', ususario: req.usuario?.usuario }
+    });
   } catch (error) {
-    console.log(error)
     res.status(418).json({ error })
+    logger.error({
+      message: 'Respuesta con errores en detalle_servicio',
+      labels: { code: 200, scope: 'get', ususario: req.usuario?.usuario }
+    });
   }
 }
 
@@ -75,10 +82,16 @@ export async function crearDetalleServicio(req: Request, res: Response) {
     })
 
     res.status(200).json(respuesta)
-    console.log({ code: 200, message: 'Respuesta exitosa en detalle_servicio', scope: 'post' })
+    logger.info({
+      message: 'Respuesta exitosa en detalle_servicio',
+      labels: { code: 200, scope: 'post', ususario: req.usuario?.usuario }
+    });
   } catch (error) {
-    console.log(error)
     res.status(418).json({ error })
+    logger.error({
+      message: 'Respuesta con errores en detalle_servicio',
+      labels: { code: 200, scope: 'post', ususario: req.usuario?.usuario }
+    });
   }
 }
 
@@ -96,9 +109,15 @@ export async function desactivarDetalleServicio(req: Request, res: Response) {
         .returning('cod_detalle_servicio')
     })
     res.status(200).json(respuesta)
-    console.log({ code: 200, message: 'Respuesta exitosa en detalle_servicio', scope: 'delete' })
+    logger.info({
+      message: 'Respuesta exitosa en detalle_servicio',
+      labels: { code: 200, scope: 'delete', ususario: req.usuario?.usuario }
+    });
   } catch (error) {
-    console.log(error)
     res.status(418).json({ error })
+    logger.error({
+      message: 'Respuesta con errores en detalle_servicio',
+      labels: { code: 200, scope: 'delete', ususario: req.usuario?.usuario }
+    });
   }
 }

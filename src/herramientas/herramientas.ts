@@ -104,11 +104,11 @@ export async function obtenerHerramientas(req: Request, res: Response) {
       labels: { code: 200, scope: 'get', ususario: req.usuario?.usuario }
     });
   } catch (error) {
-    logger.info({
+    res.status(418).json({ error })
+    logger.error({
       message: 'Respuesta con errores en herramientas',
       labels: { code: 418, scope: 'get', ususario: req.usuario?.usuario, error }
     });
-    res.status(418).json({ error })
   }
 }
 
@@ -132,7 +132,7 @@ export async function crearHerramienta(req: Request, res: Response) {
     });
   } catch (error) {
     res.status(418).json({ error })
-    logger.info({
+    logger.error({
       message: 'Respuesta con errores en herramientas',
       labels: { code: 418, scope: 'post', ususario: req.usuario?.usuario, error }
     });
@@ -158,7 +158,7 @@ export async function actualizarHerramienta(req: Request, res: Response) {
     });
   } catch (error) {
     res.status(418).json({ error })
-    logger.info({
+    logger.error({
       message: 'Respuesta con errores en herramientas',
       labels: { code: 418, scope: 'patch', ususario: req.usuario?.usuario, error }
     });
@@ -188,7 +188,7 @@ export async function desactivarHerramienta(req: Request, res: Response) {
     });
   } catch (error) {
     res.status(418).json({ error })
-    logger.info({
+    logger.error({
       message: 'Respuesta con errores en herramientas',
       labels: { code: 418, scope: 'delete', ususario: req.usuario?.usuario, error }
     });

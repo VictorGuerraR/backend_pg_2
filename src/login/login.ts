@@ -1,5 +1,6 @@
-import db from '#conexion'
-import bcrypt from 'bcrypt'
+import db from '#conexion';
+import logger from '#logs';
+import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken'
 import { Request, Response } from 'express';
@@ -69,12 +70,32 @@ export async function token(req: Request, res: Response): Promise<any> {
       if (usuarioRecord) {
         const { nombres, apellidos, usuario } = usuarioRecord
         res.status(200).json({ token, usuario: { nombres, apellidos, usuario } })
-      } else res.status(401).json({ error: { usuario: 'No se encontro usuario activo' } })
+        logger.info({
+          message: 'Token servido',
+          labels: { scope: 'post', code: 200 }
+        });
+
+      } else {
+        res.status(401).json({ error: { usuario: 'No se encontro usuario activo' } })
+        logger.error({
+          message: 'No se encontro usuario activo',
+          labels: { scope: 'post', code: 401 }
+        });
+        
+      }
     } else {
       res.status(401).json({ error: { usuario: 'No se encontro usuario activo' } })
+      logger.error({
+        message: 'No se encontro usuario activo',
+        labels: { scope: 'post', code: 401 }
+      });
+      
     }
   } catch (error) {
-    console.log(error)
+    logger.error({
+      message: 'Token verification failed',
+      labels: { scope: 'post', error }
+    });
     res.status(500).json({ error })
   }
 }

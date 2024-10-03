@@ -84,7 +84,7 @@ export async function obtenerMateriasPrimas(req: Request, res: Response) {
     });
   } catch (error) {
     res.status(418).json({ error })
-    logger.info({
+    logger.error({
       message: 'Respuesta con errores en materia-prima',
       labels: { code: 418, scope: 'get', ususario: req.usuario?.usuario, error }
     });
@@ -111,7 +111,7 @@ export async function crearMateriaPrima(req: Request, res: Response) {
     });
   } catch (error) {
     res.status(418).json({ error })
-    logger.info({
+    logger.error({
       message: 'Respuesta con errores en materia-prima',
       labels: { code: 418, scope: 'post', ususario: req.usuario?.usuario, error }
     });
@@ -136,7 +136,7 @@ export async function actualizarMateriaPrima(req: Request, res: Response) {
     });
   } catch (error) {
     res.status(418).json({ error })
-    logger.info({
+    logger.error({
       message: 'Respuesta con errores en materia-prima',
       labels: { code: 418, scope: 'patch', ususario: req.usuario?.usuario, error }
     });
@@ -165,7 +165,7 @@ export async function desactivarMateriaPrima(req: Request, res: Response) {
     });
   } catch (error) {
     res.status(418).json({ error })
-    logger.info({
+    logger.error({
       message: 'Respuesta con errores en materia-prima',
       labels: { code: 418, scope: 'delete', ususario: req.usuario?.usuario, error }
     });

@@ -1,7 +1,8 @@
 import dotenv from 'dotenv';
-import { obtenerUsuario, verificarExistenciaUsuario } from '#login/login'
+import logger from '#logs';
 import { verify, JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
+import { obtenerUsuario, verificarExistenciaUsuario } from '#login/login';
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET || ''
@@ -16,7 +17,10 @@ const verificarToken = async (token: string | undefined): Promise<JwtPayload | n
       return decodedToken;
     }
   } catch (error) {
-    console.error('Token verification failed:', error);
+    logger.error({
+      message: 'Token verification failed',
+      labels: { scope: 'post', error }
+    });
   }
 
   return null;
