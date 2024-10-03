@@ -1,6 +1,11 @@
-import app from '../index';
+import express from 'express';
 import request from 'supertest';
+import graficas from '#graficas/router'
 import { Request, Response, NextFunction } from 'express';
+
+const app = express();
+app.use(express.json());
+app.use(graficas)
 
 jest.mock('#login/middleware', () => ({
   middleware: (req: Request, res: Response, next: NextFunction) => {
