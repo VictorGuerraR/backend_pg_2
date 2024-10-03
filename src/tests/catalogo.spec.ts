@@ -2,7 +2,6 @@ import app from '../index';
 import request from 'supertest';
 import { Request, Response, NextFunction } from 'express';
 
-
 jest.mock('#login/middleware', () => ({
   middleware: (req: Request, res: Response, next: NextFunction) => {
     req.usuario = {
