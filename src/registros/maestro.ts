@@ -177,14 +177,14 @@ export async function desactivarMaestro(req: Request, res: Response) {
     const { cod_maestro, ...maestro }: DesactivacionM = desactivacionMaestro
       .parse({ cod_usuario_anulacion: req.usuario?.cod_usuario, ...req.body })
 
-    const { cod_detalle_servicio, ...detalleServicio }: DesactivacionDS =
+    const { cod_detalle_servicio: codDetalleServicio, ...detalleServicio }: DesactivacionDS =
       desactivacionDetalleServicio.parse({
         cod_detalle_servicio: 0,
         cod_usuario_anulacion: req.usuario?.cod_usuario,
         ...req.body
       })
 
-    const { cod_detalle_bien, ...detalleBien }: DesactivacionDB =
+    const { cod_detalle_bien: codDetalleBien, ...detalleBien }: DesactivacionDB =
       desactivacionDetalleBien.parse({
         cod_detalle_bien: 0,
         cod_usuario_anulacion: req.usuario?.cod_usuario,
@@ -200,6 +200,7 @@ export async function desactivarMaestro(req: Request, res: Response) {
 
       const { cod_detalle_bien: codDetalleBien, ...movimientoMP }: DesactivacionMovimientoMP =
         desactivacionMovimientoMateriaPrima.parse({
+          cod_detalle_bien,
           cod_usuario_anulacion: req.usuario?.cod_usuario
         })
 
