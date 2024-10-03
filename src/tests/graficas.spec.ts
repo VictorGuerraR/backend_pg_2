@@ -16,3 +16,10 @@ jest.mock('#login/middleware', () => ({
     next(); // Llama a next() para continuar con la ruta
   },
 }));
+
+describe('Graficas API', () => {
+  it('should return a list stats', async () => {
+    const response = await request(app).get('/graficas-1');
+    expect(response.status).toBe(200);
+  });
+});

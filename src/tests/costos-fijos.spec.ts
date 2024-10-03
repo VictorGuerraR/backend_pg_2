@@ -21,8 +21,7 @@ describe('Costos Fijos API', () => {
   it('should return a list of fixed costs', async () => {
     const response = await request(app).get('/costos-fijos');
     expect(response.status).toBe(200);
-    console.log(response)
-    expect(Array.isArray(response.body?.respuesta));
+    // expect(Array.isArray(response.body?.respuesta));
   });
 
   it('should create a new fixed cost', async () => {
