@@ -68,7 +68,7 @@ export async function obtenerRegistrosDetalleBienes(req: Request, res: Response)
     res.status(418).json({ error })
     logger.error({
       message: 'Respuesta con errores en detalle_bien',
-      labels: { code: 200, scope: 'get', ususario: req.usuario?.usuario }
+      labels: { code: 418, scope: 'get', ususario: req.usuario?.usuario }
     });
   }
 }
@@ -109,7 +109,7 @@ export async function crearDetalleBien(req: Request, res: Response) {
     res.status(418).json({ error })
     logger.error({
       message: 'Respuesta con errores en detalle_bien',
-      labels: { code: 200, scope: 'post', ususario: req.usuario?.usuario }
+      labels: { code: 418, scope: 'post', ususario: req.usuario?.usuario }
     });
   }
 }
@@ -150,7 +150,7 @@ export async function desactivarDetalleBien(req: Request, res: Response) {
     res.status(418).json({ error })
     logger.error({
       message: 'Respuesta con errores en detalle_bien',
-      labels: { code: 200, scope: 'delete', ususario: req.usuario?.usuario }
+      labels: { code: 418, scope: 'delete', ususario: req.usuario?.usuario }
     });
   }
 }
