@@ -2,7 +2,7 @@ import cors from 'cors'
 import dotenv from 'dotenv';
 import express from 'express';
 import login from '#login/router';
-import graficas from '#graficas/router' 
+import graficas from '#graficas/router'
 import registros from '#registros/router'
 import catalogos from '#catalogos/router'
 import costosFijos from '#costosFijos/router'
@@ -29,3 +29,5 @@ app.use(materiasPrimas)
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Server is running on http://localhost:${port}`));
+
+export default app
