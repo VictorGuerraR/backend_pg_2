@@ -22,10 +22,10 @@ module.exports = {
   },
   moduleDirectories: ['node_modules', 'src'],
   testMatch: ['**/__tests__/**/*.spec.ts', '**/?(*.)+(spec|test).[jt]s?(x)'],
-  globals: {
-    'ts-jest': {
+  transform: {
+    '^.+\\.ts$': ['ts-jest', {
       tsconfig: 'tsconfig.json',
-    },
+    }],
   },
   // setupFilesAfterEnv: ['<rootDir>/jest.setup.js'], // Comentado o eliminado
 };
