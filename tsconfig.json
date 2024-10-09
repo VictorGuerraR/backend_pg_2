@@ -64,6 +64,9 @@
       "#registros/*": [
         "src/registros/*"
       ],
+      "#reportes/*": [
+        "src/reportes/*"
+      ],
       "#tools/*": [
         "src/tools/*"
       ],
