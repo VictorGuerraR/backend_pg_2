@@ -82,7 +82,7 @@ function parseDataToStats(data: any) {
 
 export async function obtenerGraficasEncabezado(req: Request, res: Response) {
   try {
-    const { fecha_creacion = [dayjs(), dayjs(),] } = req.query;
+    const { fecha_creacion = [dayjs(), dayjs()] } = req.query;
     const [data] = await whereGraficas({ fecha_creacion }, consultaGraficasEncabezados(), 'm')
     const stats = parseDataToStats(data);
     res.status(200).json(stats);
