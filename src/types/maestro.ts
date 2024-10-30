@@ -12,7 +12,7 @@ export type Maestro = {
   porcentaje_impuesto?: number;
   monto_impuesto?: number;
   precio_kw?: number;
-  monto_ganacia?: number;
+  monto_ganancia?: number;
   porcentaje_ganacia?: number;
 }
 
@@ -25,7 +25,7 @@ export const creacionMaestro = z.object({
   porcentaje_impuesto: z.union([z.string(), z.number()]).transform((val) => Number(val)).default(5),
   monto_impuesto: z.union([z.string(), z.number()]).transform((val) => Number(val)).default(0),
   precio_kw: z.union([z.string(), z.number()]).transform((val) => Number(val)).default(1),
-  monto_ganacia: z.union([z.string(), z.number()]).transform((val) => Number(val)).default(25),
+  monto_ganancia: z.union([z.string(), z.number()]).transform((val) => Number(val)).default(25),
   porcentaje_ganancia: z.union([z.string(), z.number()]).transform((val) => Number(val)).default(0)
 });
 

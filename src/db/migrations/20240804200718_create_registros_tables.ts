@@ -19,11 +19,11 @@ export async function up(knex: Knex): Promise<void> {
   // Tabla maestro
   await knex.schema.withSchema('registros').createTable('maestro', (table) => {
     table.increments('cod_maestro').primary();
-    table.integer('cod_usuario_creacion').references('cod_usuario').inTable('registros.usuarios')
+    table.integer('cod_usuario_creacion').references('cod_usuario').inTable('sistema.usuarios')
       .onDelete('RESTRICT').onUpdate('CASCADE').notNullable();
     table.date('fecha_creacion').defaultTo(knex.fn.now());
     table.boolean('activo').notNullable().defaultTo(true);
-    table.integer('cod_usuario_anulacion').references('cod_usuario').inTable('registros.usuarios')
+    table.integer('cod_usuario_anulacion').references('cod_usuario').inTable('sistema.usuarios')
       .onDelete('RESTRICT').onUpdate('CASCADE');
     table.date('fecha_anulacion');
     table.string('descripcion');
@@ -32,17 +32,17 @@ export async function up(knex: Knex): Promise<void> {
     table.decimal('porcentaje_impuesto', 5, 2).notNullable().defaultTo(5.00);
     table.decimal('monto_impuesto', 13, 2).notNullable().defaultTo(0);
     table.decimal('precio_kW', 13, 2).notNullable().defaultTo(1);
-    table.decimal('monto_ganacia', 13, 2);
+    table.decimal('monto_ganancia', 13, 2);
     table.decimal('porcentaje_ganancia', 5, 2);
   });
 
   // Tabla materia_prima
   await knex.schema.withSchema('registros').createTable('materia_prima', (table) => {
     table.increments('cod_materia_prima').primary();
-    table.integer('cod_usuario_creacion').references('cod_usuario').inTable('registros.usuarios')
+    table.integer('cod_usuario_creacion').references('cod_usuario').inTable('sistema.usuarios')
       .onDelete('RESTRICT').onUpdate('CASCADE');
     table.date('fecha_creacion').defaultTo(knex.fn.now());
-    table.integer('cod_usuario_anulacion').references('cod_usuario').inTable('registros.usuarios')
+    table.integer('cod_usuario_anulacion').references('cod_usuario').inTable('sistema.usuarios')
       .onDelete('RESTRICT').onUpdate('CASCADE');
     table.boolean('activo').notNullable().defaultTo(true);
     table.date('fecha_anulacion');
@@ -58,11 +58,11 @@ export async function up(knex: Knex): Promise<void> {
     table.increments('cod_detalle_bien').primary();
     table.integer('cod_materia_prima').references('cod_materia_prima').inTable('registros.materia_prima')
       .onDelete('RESTRICT').onUpdate('CASCADE').notNullable();
-    table.integer('cod_usuario_creacion').references('cod_usuario').inTable('registros.usuarios')
+    table.integer('cod_usuario_creacion').references('cod_usuario').inTable('sistema.usuarios')
       .onDelete('RESTRICT').onUpdate('CASCADE').notNullable();
     table.date('fecha_creacion').defaultTo(knex.fn.now());
     table.boolean('activo').notNullable().defaultTo(true);
-    table.integer('cod_usuario_anulacion').references('cod_usuario').inTable('registros.usuarios')
+    table.integer('cod_usuario_anulacion').references('cod_usuario').inTable('sistema.usuarios')
       .onDelete('RESTRICT').onUpdate('CASCADE');
     table.date('fecha_anulacion');
     table.string('descripcion');
@@ -91,14 +91,14 @@ export async function up(knex: Knex): Promise<void> {
     table.increments('cod_herramienta').primary();
     table.integer('cod_tipo_depreciacion').references('cod_tipo_depreciacion').inTable('registros.porcentajes_depreciacion')
       .onDelete('RESTRICT').onUpdate('CASCADE').notNullable();
-    table.integer('cod_usuario_responsable').references('cod_usuario').inTable('registros.usuarios')
+    table.integer('cod_usuario_responsable').references('cod_usuario').inTable('sistema.usuarios')
       .onDelete('RESTRICT').onUpdate('CASCADE').notNullable();
-    table.integer('cod_usuario_creacion').references('cod_usuario').inTable('registros.usuarios')
+    table.integer('cod_usuario_creacion').references('cod_usuario').inTable('sistema.usuarios')
       .onDelete('RESTRICT').onUpdate('CASCADE').notNullable();
     table.date('fecha_creacion').defaultTo(knex.fn.now());
     table.date('fecha_adquisicion').defaultTo(knex.fn.now());
     table.boolean('activo').notNullable().defaultTo(true);
-    table.integer('cod_usuario_anulacion').references('cod_usuario').inTable('registros.usuarios')
+    table.integer('cod_usuario_anulacion').references('cod_usuario').inTable('sistema.usuarios')
       .onDelete('RESTRICT').onUpdate('CASCADE');
     table.date('fecha_anulacion');
     table.string('descripcion');
@@ -113,11 +113,11 @@ export async function up(knex: Knex): Promise<void> {
     table.increments('cod_detalle_servicio').primary();
     table.integer('cod_herramienta').references('cod_herramienta').inTable('registros.herramienta')
       .onDelete('RESTRICT').onUpdate('CASCADE').notNullable();
-    table.integer('cod_usuario_creacion').references('cod_usuario').inTable('registros.usuarios')
+    table.integer('cod_usuario_creacion').references('cod_usuario').inTable('sistema.usuarios')
       .onDelete('RESTRICT').onUpdate('CASCADE').notNullable();
     table.date('fecha_creacion').defaultTo(knex.fn.now());
     table.boolean('activo').notNullable().defaultTo(true);
-    table.integer('cod_usuario_anulacion').references('cod_usuario').inTable('registros.usuarios')
+    table.integer('cod_usuario_anulacion').references('cod_usuario').inTable('sistema.usuarios')
       .onDelete('RESTRICT').onUpdate('CASCADE');
     table.date('fecha_anulacion');
     table.string('descripcion');
@@ -135,11 +135,11 @@ export async function up(knex: Knex): Promise<void> {
   // Tabla costo_fijos
   await knex.schema.withSchema('registros').createTable('costo_fijos', (table) => {
     table.increments('cod_costo_fijo').primary();
-    table.integer('cod_usuario_creacion').references('cod_usuario').inTable('registros.usuarios')
+    table.integer('cod_usuario_creacion').references('cod_usuario').inTable('sistema.usuarios')
       .onDelete('RESTRICT').onUpdate('CASCADE');
     table.date('fecha_creacion').defaultTo(knex.fn.now());
     table.boolean('activo').defaultTo(true).notNullable();
-    table.integer('cod_usuario_anulacion').references('cod_usuario').inTable('registros.usuarios')
+    table.integer('cod_usuario_anulacion').references('cod_usuario').inTable('sistema.usuarios')
       .onDelete('RESTRICT').onUpdate('CASCADE');
     table.date('fecha_anulacion');
     table.string('descripcion');
@@ -151,10 +151,10 @@ export async function up(knex: Knex): Promise<void> {
   // Tabla movimiento_materia_prima
   await knex.schema.withSchema('registros').createTable('movimiento_materia_prima', (table) => {
     table.increments('cod_movimiento_materia_prima').primary();
-    table.integer('cod_usuario_creacion').references('cod_usuario').inTable('registros.usuarios')
+    table.integer('cod_usuario_creacion').references('cod_usuario').inTable('sistema.usuarios')
       .onDelete('RESTRICT').onUpdate('CASCADE');
     table.date('fecha_creacion').defaultTo(knex.fn.now());
-    table.integer('cod_usuario_anulacion').references('cod_usuario').inTable('registros.usuarios')
+    table.integer('cod_usuario_anulacion').references('cod_usuario').inTable('sistema.usuarios')
       .onDelete('RESTRICT').onUpdate('CASCADE');
     table.boolean('activo').defaultTo(true).notNullable();
     table.date('fecha_anulacion');
@@ -213,14 +213,23 @@ export async function up(knex: Knex): Promise<void> {
   await knex.raw(`
           CREATE OR REPLACE FUNCTION calcular_montos_maestro()
           RETURNS TRIGGER AS $$
+          DECLARE
+            base_total NUMERIC;
+            tasa_impuesto_ajustada NUMERIC;
           BEGIN
-              -- Calcular el monto de la ganancia
-              NEW.monto_ganacia := NEW.monto_total * (NEW.porcentaje_ganancia / 100);
-  
-              -- Calcular el monto del impuesto
-              NEW.monto_impuesto := (NEW.monto_total + NEW.monto_ganacia) * (NEW.porcentaje_impuesto / 100);
-  
-              RETURN NEW;
+            -- Calcular el monto de la ganancia
+            NEW.monto_ganancia := NEW.monto_total * (NEW.porcentaje_ganancia / 100.0);
+
+            -- Calcular la base total sobre la cual se aplicará el impuesto
+            base_total := NEW.monto_total + NEW.monto_ganancia;
+
+            -- Calcular la tasa de impuesto ajustada
+            tasa_impuesto_ajustada := NEW.porcentaje_impuesto / (100.0 - NEW.porcentaje_impuesto);
+
+            -- Calcular el monto del impuesto
+            NEW.monto_impuesto := base_total * tasa_impuesto_ajustada;
+
+            RETURN NEW;
           END;
           $$ LANGUAGE plpgsql;
       `);

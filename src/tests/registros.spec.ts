@@ -43,7 +43,7 @@ describe('Pruebas de Maestro', () => {
     const nuevoMaestro = {
       cod_usuario_creacion: 1, // Cambia esto si es necesario
       descripcion: 'Nuevo Maestro',
-      monto_ganacia: 1000,
+      monto_ganancia: 1000,
       monto_impuesto: 200,
       monto_total: 1200,
       porcentaje_ganancia: 10,
@@ -61,7 +61,7 @@ describe('Pruebas de Maestro', () => {
     const actualizarMaestro = {
       cod_maestro: 1, // Cambia este ID por uno existente en tu base de datos
       descripcion: 'Maestro Actualizado',
-      monto_ganacia: 1500,
+      monto_ganancia: 1500,
     };
 
     const res = await request(app).patch(endpointBase).send(actualizarMaestro);

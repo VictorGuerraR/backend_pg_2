@@ -20,7 +20,7 @@ const JWT_SECRET = process.env.JWT_SECRET || ''
 
 export async function verificarExistenciaUsuario(cod_usuario: number): Promise<boolean | null> {
   if (!cod_usuario) return null
-  const { existe } = await db('registros.usuarios')
+  const { existe } = await db('sistema.usuarios')
     .select({
       existe: db.raw(`
       case
@@ -39,7 +39,7 @@ export async function verificarExistenciaUsuario(cod_usuario: number): Promise<b
 export async function obtenerUsuario(usuario: string): Promise<Usuario | null> {
   if (!usuario) return null
 
-  const record: Usuario = await db('registros.usuarios')
+  const record: Usuario = await db('sistema.usuarios')
     .select('cod_usuario', 'fecha_creacion', 'nombres', 'apellidos', 'usuario', 'password', 'activo',)
     .where('activo', true)
     .where({ usuario })
@@ -107,7 +107,7 @@ export async function creacion(req: Request, res: Response) {
     await db.transaction(async (trx) => {
       usuario.password = await bcrypt.hash(usuario.password, 10)
       usuario.usuario = `${usuario.nombres.replace(/\s+/g, '').toLowerCase()}.${usuario.apellidos.replace(/\s+/g, '').toLowerCase()}`
-      respuesta = await trx('registros.usuarios')
+      respuesta = await trx('sistema.usuarios')
         .insert(usuario)
         .returning('cod_usuario')
     })
@@ -124,7 +124,7 @@ export async function actualizacion(req: Request, res: Response) {
     const { cod_usuario, ...usuario }: ActualizacionU = actualizacionUsuario.parse(req.body)
     await db.transaction(async (trx) => {
       usuario.password = await bcrypt.hash(usuario.password, 10)
-      respuesta = await trx('registros.usuarios')
+      respuesta = await trx('sistema.usuarios')
         .update(usuario)
         .where({ cod_usuario })
         .returning('cod_usuario')
@@ -141,7 +141,7 @@ export async function deshabilitar(req: Request, res: Response) {
     let respuesta
     const { cod_usuario, ...usuario }: DesactivacionU = desactivacionUsuario.parse(req.body)
     await db.transaction(async (trx) => {
-      respuesta = await trx('registros.usuarios')
+      respuesta = await trx('sistema.usuarios')
         .update(usuario)
         .where({ cod_usuario })
         .returning('cod_usuario')

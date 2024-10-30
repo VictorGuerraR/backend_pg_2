@@ -31,7 +31,7 @@ function whereDetalleServicio(params: any, query: Knex.QueryBuilder, prefix: str
 }
 
 const consultaDetalleServicios = () => db({ ds: 'registros.detalle_servicio' })
-  .innerJoin({ uc: 'registros.usuarios' }, 'uc.cod_usuario', 'ds.cod_usuario_creacion')
+  .innerJoin({ uc: 'sistema.usuarios' }, 'uc.cod_usuario', 'ds.cod_usuario_creacion')
   .select(
     'ds.activo',
     'ds.cod_detalle_servicio',

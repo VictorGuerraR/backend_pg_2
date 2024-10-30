@@ -27,7 +27,7 @@ function whereReportes(params: any, query: Knex.QueryBuilder, prefix: string): K
 const consultaReporteDepreciacion = () => db({ ds: 'registros.detalle_servicio' })
   .innerJoin({ m: 'registros.maestro' }, 'ds.cod_maestro', 'm.cod_maestro')
   .innerJoin({ h: 'registros.herramienta' }, 'h.cod_herramienta', 'ds.cod_herramienta')
-  .innerJoin({ ur: 'registros.usuarios' }, 'ur.cod_usuario', 'h.cod_usuario_responsable')
+  .innerJoin({ ur: 'sistema.usuarios' }, 'ur.cod_usuario', 'h.cod_usuario_responsable')
   .select(
     'h.cod_herramienta',
     'h.descripcion',
@@ -67,12 +67,12 @@ const consultaCostosFijos = () => db({ c: 'registros.costo_fijos' })
 
 const consultaReporteGananciaPorUsuario = () => db({ m: 'registros.maestro' })
   .innerJoin({ ds: 'registros.detalle_servicio' }, 'ds.cod_maestro', 'm.cod_maestro')
-  .innerJoin({ u: 'registros.usuarios' }, 'u.cod_usuario', 'm.cod_usuario_creacion')
+  .innerJoin({ u: 'sistema.usuarios' }, 'u.cod_usuario', 'm.cod_usuario_creacion')
   .with('cs', consultaCostosFijos())
   .select(
     'm.codigo_moneda',
     { usuario: db.raw("CONCAT(u.nombres, ' ', u.apellidos)") },
-    { ganancia: db.raw('SUM(m.monto_ganacia)') },
+    { ganancia: db.raw('SUM(m.monto_ganancia)') },
     { impuesto: db.raw('SUM(m.monto_impuesto)') },
     { cobertura_costos: db.raw("SUM(ds.total_horas_servicio)") },
     { cobertura_costos_porcentaje: db.raw("ROUND( (SUM(ds.total_horas_servicio) / (select cs.costos from cs))*100,2 ) ") }

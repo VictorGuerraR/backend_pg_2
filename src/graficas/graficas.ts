@@ -37,7 +37,7 @@ const consultaGraficasEncabezados = () => db({ m: 'registros.maestro' })
     .groupBy('cod_maestro').as('db')
     , 'db.cod_maestro', 'm.cod_maestro')
   .select(
-    { "Total Ganancia": db.raw('COALESCE(SUM(m.monto_ganacia), 0) - COALESCE(SUM(m.monto_impuesto), 0)') },
+    { "Total Ganancia": db.raw('COALESCE(SUM(m.monto_ganancia), 0) - COALESCE(SUM(m.monto_impuesto), 0)') },
     { "Total Impuesto": db.raw('COALESCE(SUM(m.monto_impuesto), 0)') },
     { "Monto Total Servicio": db.raw('COALESCE(SUM(ds.monto_total), 0)') },
     { "Monto Total Bien": db.raw('COALESCE(SUM(db.monto_total), 0)') }

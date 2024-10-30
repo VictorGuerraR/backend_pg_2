@@ -1,7 +1,8 @@
 create SCHEMA registros;
+create SCHEMA sistema;
 
 -- TABLA DE USUARIO
-create table registros.usuarios(
+create table sistema.usuarios(
     cod_usuario SERIAL PRIMARY key,
     fecha_creacion DATE DEFAULT NOW(),
     nombres VARCHAR NOT null,
@@ -15,11 +16,11 @@ create table registros.usuarios(
 -- Tabla maestro
 CREATE TABLE registros.maestro (
     cod_maestro SERIAL PRIMARY KEY,
-    cod_usuario_creacion int references registros.usuarios(cod_usuario) 
+    cod_usuario_creacion int references sistema.usuarios(cod_usuario) 
         on delete restrict on update cascade not null,
     fecha_creacion DATE DEFAULT NOW(),
     activo BOOLEAN not null default true,
-    cod_usuario_anulacion int references registros.usuarios(cod_usuario) 
+    cod_usuario_anulacion int references sistema.usuarios(cod_usuario) 
         on delete restrict on update cascade,
     fecha_anulacion date,
     descripcion VARCHAR,
@@ -28,17 +29,17 @@ CREATE TABLE registros.maestro (
     porcentaje_impuesto NUMERIC(5, 2) not null default 5.00,
     monto_impuesto NUMERIC(13, 2) not null default 0,
     precio_kW NUMERIC(13, 2) not null default 1,
-    monto_ganacia NUMERIC(13, 2),
+    monto_ganancia NUMERIC(13, 2),
     porcentaje_ganancia NUMERIC(5, 2)
 );
 
 -- Tabla materia_prima
 CREATE TABLE registros.materia_prima (
     cod_materia_prima SERIAL PRIMARY KEY,
-    cod_usuario_creacion int references registros.usuarios(cod_usuario) 
+    cod_usuario_creacion int references sistema.usuarios(cod_usuario) 
         on delete restrict on update cascade,
     fecha_creacion DATE DEFAULT NOW(),
-    cod_usuario_anulacion int references registros.usuarios(cod_usuario) 
+    cod_usuario_anulacion int references sistema.usuarios(cod_usuario) 
         on delete restrict on update cascade,
     activo BOOLEAN not null default true,
     fecha_anulacion date,
@@ -54,11 +55,11 @@ CREATE TABLE registros.detalle_bien (
     cod_detalle_bien SERIAL PRIMARY KEY,
     cod_materia_prima INT REFERENCES registros.materia_prima(cod_materia_prima) 
         on delete restrict on update cascade not null,
-    cod_usuario_creacion int references registros.usuarios(cod_usuario) 
+    cod_usuario_creacion int references sistema.usuarios(cod_usuario) 
         on delete restrict on update cascade not null,
     fecha_creacion DATE DEFAULT NOW(),
     activo BOOLEAN not null default true,
-    cod_usuario_anulacion int references registros.usuarios(cod_usuario) 
+    cod_usuario_anulacion int references sistema.usuarios(cod_usuario) 
         on delete restrict on update cascade,
     fecha_anulacion date,
     descripcion VARCHAR,
@@ -86,14 +87,14 @@ CREATE TABLE registros.herramienta (
     cod_herramienta SERIAL PRIMARY KEY,
     cod_tipo_depreciacion INT REFERENCES registros.porcentajes_depreciacion(cod_tipo_depreciacion) 
         on delete restrict on update cascade not null,
-    cod_usuario_responsable int references registros.usuarios(cod_usuario) 
+    cod_usuario_responsable int references sistema.usuarios(cod_usuario) 
         on delete restrict on update cascade not null,
-    cod_usuario_creacion int references registros.usuarios(cod_usuario) 
+    cod_usuario_creacion int references sistema.usuarios(cod_usuario) 
         on delete restrict on update cascade not null,
     fecha_creacion DATE DEFAULT NOW(),
     fecha_adquisicion DATE DEFAULT NOW(),
     activo BOOLEAN not null default true,
-    cod_usuario_anulacion int references registros.usuarios(cod_usuario) 
+    cod_usuario_anulacion int references sistema.usuarios(cod_usuario) 
         on delete restrict on update cascade,
     fecha_anulacion date,
     descripcion VARCHAR,
@@ -108,11 +109,11 @@ CREATE TABLE registros.detalle_servicio (
     cod_detalle_servicio SERIAL PRIMARY KEY,
     cod_herramienta INT REFERENCES registros.herramienta(cod_herramienta) 
         on delete restrict on update cascade not null,
-    cod_usuario_creacion int references registros.usuarios(cod_usuario) 
+    cod_usuario_creacion int references sistema.usuarios(cod_usuario) 
         on delete restrict on update cascade not null,
     fecha_creacion DATE DEFAULT NOW(),
     activo BOOLEAN not null default true,
-    cod_usuario_anulacion int references registros.usuarios(cod_usuario) 
+    cod_usuario_anulacion int references sistema.usuarios(cod_usuario) 
         on delete restrict on update cascade,
     fecha_anulacion date,
     descripcion VARCHAR,
@@ -130,11 +131,11 @@ CREATE TABLE registros.detalle_servicio (
 -- Tabla costo_fijos
 CREATE TABLE registros.costo_fijos (
     cod_costo_fijo SERIAL PRIMARY KEY,
-    cod_usuario_creacion INT REFERENCES registros.usuarios(cod_usuario) 
+    cod_usuario_creacion INT REFERENCES sistema.usuarios(cod_usuario) 
         on delete restrict on update cascade,
     fecha_creacion DATE DEFAULT NOW(),
     activo BOOLEAN DEFAULT true NOT NULL,
-    cod_usuario_anulacion INT REFERENCES registros.usuarios(cod_usuario) 
+    cod_usuario_anulacion INT REFERENCES sistema.usuarios(cod_usuario) 
         on delete restrict on update cascade,
     fecha_anulacion DATE,
     descripcion VARCHAR,
@@ -149,10 +150,10 @@ CREATE TABLE registros.movimiento_materia_prima (
         on delete restrict on update cascade not null,
     cod_materia_prima INT REFERENCES registros.materia_prima(cod_materia_prima) 
         on delete restrict on update cascade not null,
-    cod_usuario_creacion INT REFERENCES registros.usuarios(cod_usuario) 
+    cod_usuario_creacion INT REFERENCES sistema.usuarios(cod_usuario) 
         on delete restrict on update cascade not null,
     fecha_creacion DATE DEFAULT NOW(),
-    cod_usuario_anulacion int references registros.usuarios(cod_usuario) 
+    cod_usuario_anulacion int references sistema.usuarios(cod_usuario) 
         on delete restrict on update cascade,
     activo BOOLEAN not null default true,
     fecha_anulacion date,
@@ -194,16 +195,26 @@ EXECUTE FUNCTION actualizar_monto_total_maestro();
 
 CREATE OR REPLACE FUNCTION calcular_montos_maestro()
 RETURNS TRIGGER AS $$
+DECLARE
+  base_total NUMERIC;
+  tasa_impuesto_ajustada NUMERIC;
 BEGIN
   -- Calcular el monto de la ganancia
-  NEW.monto_ganacia := NEW.monto_total * (NEW.porcentaje_ganancia / 100);
+  NEW.monto_ganancia := NEW.monto_total * (NEW.porcentaje_ganancia / 100.0);
+
+  -- Calcular la base total sobre la cual se aplicará el impuesto
+  base_total := NEW.monto_total + NEW.monto_ganancia;
+
+  -- Calcular la tasa de impuesto ajustada
+  tasa_impuesto_ajustada := NEW.porcentaje_impuesto / (100.0 - NEW.porcentaje_impuesto);
 
   -- Calcular el monto del impuesto
-  NEW.monto_impuesto := (NEW.monto_total + NEW.monto_ganacia) * (NEW.porcentaje_impuesto / 100);
+  NEW.monto_impuesto := base_total * tasa_impuesto_ajustada;
 
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
 
 
 CREATE TRIGGER trigger_calcular_montos_maestro
@@ -221,4 +232,4 @@ EXECUTE FUNCTION calcular_montos_maestro();
 --DROP TABLE registros.herramienta;
 --DROP TABLE registros.materia_prima;
 --DROP TABLE registros.porcentajes_depreciacion;
---DROP TABLE registros.usuarios;
+--DROP TABLE sistema.usuarios;

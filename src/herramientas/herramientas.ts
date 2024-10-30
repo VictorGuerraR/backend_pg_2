@@ -44,8 +44,8 @@ function whereHerramientas(params: any, query: Knex.QueryBuilder, prefix: string
 
 const consultaHerramientas = () => db({ h: 'registros.herramienta' })
   .innerJoin({ pd: 'registros.porcentajes_depreciacion' }, 'h.cod_tipo_depreciacion', 'pd.cod_tipo_depreciacion')
-  .innerJoin({ ur: 'registros.usuarios' }, 'ur.cod_usuario', 'h.cod_usuario_responsable')
-  .innerJoin({ uc: 'registros.usuarios' }, 'uc.cod_usuario', 'h.cod_usuario_creacion')
+  .innerJoin({ ur: 'sistema.usuarios' }, 'ur.cod_usuario', 'h.cod_usuario_responsable')
+  .innerJoin({ uc: 'sistema.usuarios' }, 'uc.cod_usuario', 'h.cod_usuario_creacion')
   .leftJoin({ ds: 'registros.detalle_servicio' }, 'ds.cod_herramienta', 'h.cod_herramienta')
   .select(
     'h.cod_herramienta',

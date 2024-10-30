@@ -42,7 +42,7 @@ function whereMateriasPrimas(params: any, query: Knex.QueryBuilder, prefix: stri
 }
 
 const consultaMateriasPrimas = () => db({ mp: 'registros.materia_prima' })
-  .innerJoin({ uc: 'registros.usuarios' }, 'mp.cod_usuario_creacion', 'uc.cod_usuario')
+  .innerJoin({ uc: 'sistema.usuarios' }, 'mp.cod_usuario_creacion', 'uc.cod_usuario')
   .leftJoin({ mmp: 'registros.movimiento_materia_prima' }, 'mmp.cod_materia_prima', 'mp.cod_materia_prima')
   .select(
     'mp.cod_materia_prima',

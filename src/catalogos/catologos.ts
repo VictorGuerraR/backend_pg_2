@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 
 export async function usuarios(req: Request, res: Response) {
   try {
-    const respuesta = await db({ u: 'registros.usuarios' })
+    const respuesta = await db({ u: 'sistema.usuarios' })
       .select(
         'u.cod_usuario',
         'u.nombres',

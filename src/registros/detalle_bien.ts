@@ -38,7 +38,7 @@ function whereDetalleBien(params: any, query: Knex.QueryBuilder, prefix: string)
 }
 
 const consultaDetalleBien = () => db({ db: 'registros.detalle_bien' })
-  .innerJoin({ uc: 'registros.usuarios' }, 'uc.cod_usuario', 'db.cod_usuario_creacion')
+  .innerJoin({ uc: 'sistema.usuarios' }, 'uc.cod_usuario', 'db.cod_usuario_creacion')
   .innerJoin({ mp: 'registros.materia_prima' }, 'db.cod_materia_prima', 'mp.cod_materia_prima')
   .select(
     'db.activo',

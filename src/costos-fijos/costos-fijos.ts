@@ -38,7 +38,7 @@ function whereCostosFijos(params: any, query: Knex.QueryBuilder, prefix: string)
 }
 
 const consultaCostosFijos = () => db({ cf: 'registros.costo_fijos' })
-  .innerJoin({ uc: 'registros.usuarios' }, 'uc.cod_usuario', 'cf.cod_usuario_creacion')
+  .innerJoin({ uc: 'sistema.usuarios' }, 'uc.cod_usuario', 'cf.cod_usuario_creacion')
   .select(
     { usuario_creacion: db.raw("concat(uc.nombres, ' ', uc.apellidos)") },
     'cf.cod_costo_fijo',

@@ -49,7 +49,7 @@ function whereMaestro(params: any, query: Knex.QueryBuilder, prefix: string): Kn
 }
 
 const consultaMaestro = () => db({ m: 'registros.maestro' })
-  .innerJoin({ uc: 'registros.usuarios' }, 'm.cod_usuario_creacion', 'uc.cod_usuario')
+  .innerJoin({ uc: 'sistema.usuarios' }, 'm.cod_usuario_creacion', 'uc.cod_usuario')
   .select(
     'm.activo',
     'm.cod_maestro',
@@ -59,7 +59,7 @@ const consultaMaestro = () => db({ m: 'registros.maestro' })
     'm.descripcion',
     'm.fecha_anulacion',
     'm.fecha_creacion',
-    'm.monto_ganacia',
+    'm.monto_ganancia',
     'm.monto_impuesto',
     'm.monto_total',
     'm.porcentaje_ganancia',
