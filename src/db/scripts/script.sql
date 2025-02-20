@@ -51,8 +51,8 @@ CREATE TABLE registros.materia_prima (
 );
 
 -- Tabla detalle_bien
-CREATE TABLE registros.detalle_bien (
-    cod_detalle_bien SERIAL PRIMARY KEY,
+CREATE TABLE registros.detalle_consumo_materia_prima (
+    cod_consumo_materia_prima SERIAL PRIMARY KEY,
     cod_materia_prima INT REFERENCES registros.materia_prima(cod_materia_prima) 
         on delete restrict on update cascade not null,
     cod_usuario_creacion int references sistema.usuarios(cod_usuario) 
@@ -67,7 +67,7 @@ CREATE TABLE registros.detalle_bien (
     monto_total NUMERIC(13, 2) not null default 0,
     codigo_unidad VARCHAR(2) not null default 'U',
     unidad NUMERIC(13, 2),
-    cod_maestro INT REFERENCES registros.maestro(cod_maestro) 
+    cod_detalle_servicio INT REFERENCES registros.detalle_servicio(cod_maestro) 
         on delete restrict on update cascade not null
 );
 
@@ -146,7 +146,7 @@ CREATE TABLE registros.costo_fijos (
 -- Tabla movimiento_materia_prima
 CREATE TABLE registros.movimiento_materia_prima (
     cod_registro_materia_prima SERIAL PRIMARY KEY,
-    cod_detalle_bien INT references registros.detalle_bien(cod_detalle_bien) 
+    cod_consumo_materia_prima INT references registros.detalle_consumo_materia_prima(cod_consumo_materia_prima) 
         on delete restrict on update cascade not null,
     cod_materia_prima INT REFERENCES registros.materia_prima(cod_materia_prima) 
         on delete restrict on update cascade not null,
