@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: mi_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: sistema
+    volumes:
+      - ~/Otros/bd:/var/lib/postgresql/data
+    ports:
+      - "2499:5432"

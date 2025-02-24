@@ -1,6 +1,9 @@
+create schema activos;
+create SCHEMA cotizaciones;
+create SCHEMA inventario;
 create SCHEMA registros;
 create SCHEMA sistema;
-
+/* SISTEMA */
 -- TABLA DE USUARIO
 create table sistema.usuarios(
     cod_usuario SERIAL PRIMARY key,
@@ -12,16 +15,68 @@ create table sistema.usuarios(
     activo boolean not null default true,
     fecha_inactivacion date
 );
-
+/* ACTIVOS */
+-- Tabla porcentajes_depreciacion
+CREATE TABLE activos.porcentajes_depreciacion (
+    cod_tipo_depreciacion SERIAL PRIMARY KEY,
+    descripcion VARCHAR NOT NULL,
+    porcentaje_depreciacion_anual NUMERIC(5, 2) NOT NULL
+);
+-- Insertar información en la tabla porcentajes_depreciacion
+INSERT INTO activos.porcentajes_depreciacion (descripcion, porcentaje_depreciacion_anual)
+values ('Equipo de computación', 33.33);
+-- Tabla herramienta
+CREATE TABLE activos.herramienta (
+    cod_herramienta SERIAL PRIMARY KEY,
+    cod_tipo_depreciacion INT REFERENCES activos.porcentajes_depreciacion(cod_tipo_depreciacion) on delete restrict on update cascade not null,
+    cod_usuario_responsable int references sistema.usuarios(cod_usuario) on delete restrict on update cascade not null,
+    cod_usuario_creacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade not null,
+    fecha_creacion DATE DEFAULT NOW(),
+    fecha_adquisicion DATE DEFAULT NOW(),
+    activo BOOLEAN not null default true,
+    cod_usuario_anulacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade,
+    fecha_anulacion date,
+    descripcion VARCHAR,
+    codigo_moneda VARCHAR(3) not null default 'GTQ',
+    monto NUMERIC(13, 2),
+    consumo_electrico NUMERIC(13, 2),
+    codigo_medida_electricidad varchar(1) default 'W'
+);
+/* INVENTARIO */
+-- Tabla materia_prima
+CREATE TABLE inventario.materia_prima (
+    cod_materia_prima SERIAL PRIMARY KEY,
+    cod_usuario_creacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade,
+    fecha_creacion DATE DEFAULT NOW(),
+    cod_usuario_anulacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade,
+    activo BOOLEAN not null default true,
+    fecha_anulacion date,
+    descripcion VARCHAR,
+    codigo_moneda VARCHAR(3) not null default 'GTQ',
+    monto NUMERIC(13, 2),
+    cantidad NUMERIC(13, 2),
+    codigo_unidad VARCHAR(2)
+);
+/* REGISTROS */
+-- Tabla costo_fijos
+CREATE TABLE registros.costo_fijos (
+    cod_costo_fijo SERIAL PRIMARY KEY,
+    cod_usuario_creacion INT REFERENCES sistema.usuarios(cod_usuario) on delete restrict on update cascade,
+    fecha_creacion DATE DEFAULT NOW(),
+    activo BOOLEAN DEFAULT true NOT NULL,
+    cod_usuario_anulacion INT REFERENCES sistema.usuarios(cod_usuario) on delete restrict on update cascade,
+    fecha_anulacion DATE,
+    descripcion VARCHAR,
+    codigo_moneda VARCHAR(3) DEFAULT 'GTQ' NOT NULL,
+    monto_total NUMERIC(13, 2)
+);
 -- Tabla maestro
 CREATE TABLE registros.maestro (
     cod_maestro SERIAL PRIMARY KEY,
-    cod_usuario_creacion int references sistema.usuarios(cod_usuario) 
-        on delete restrict on update cascade not null,
+    cod_usuario_creacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade not null,
     fecha_creacion DATE DEFAULT NOW(),
     activo BOOLEAN not null default true,
-    cod_usuario_anulacion int references sistema.usuarios(cod_usuario) 
-        on delete restrict on update cascade,
+    cod_usuario_anulacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade,
     fecha_anulacion date,
     descripcion VARCHAR,
     codigo_moneda VARCHAR(3) not null default 'GTQ',
@@ -32,89 +87,14 @@ CREATE TABLE registros.maestro (
     monto_ganancia NUMERIC(13, 2),
     porcentaje_ganancia NUMERIC(5, 2)
 );
-
--- Tabla materia_prima
-CREATE TABLE registros.materia_prima (
-    cod_materia_prima SERIAL PRIMARY KEY,
-    cod_usuario_creacion int references sistema.usuarios(cod_usuario) 
-        on delete restrict on update cascade,
-    fecha_creacion DATE DEFAULT NOW(),
-    cod_usuario_anulacion int references sistema.usuarios(cod_usuario) 
-        on delete restrict on update cascade,
-    activo BOOLEAN not null default true,
-    fecha_anulacion date,
-    descripcion VARCHAR,
-    codigo_moneda VARCHAR(3) not null default 'GTQ',
-    monto NUMERIC(13, 2),
-    cantidad NUMERIC(13, 2),
-    codigo_unidad VARCHAR(2)
-);
-
--- Tabla detalle_bien
-CREATE TABLE registros.detalle_consumo_materia_prima (
-    cod_consumo_materia_prima SERIAL PRIMARY KEY,
-    cod_materia_prima INT REFERENCES registros.materia_prima(cod_materia_prima) 
-        on delete restrict on update cascade not null,
-    cod_usuario_creacion int references sistema.usuarios(cod_usuario) 
-        on delete restrict on update cascade not null,
-    fecha_creacion DATE DEFAULT NOW(),
-    activo BOOLEAN not null default true,
-    cod_usuario_anulacion int references sistema.usuarios(cod_usuario) 
-        on delete restrict on update cascade,
-    fecha_anulacion date,
-    descripcion VARCHAR,
-    codigo_moneda VARCHAR(3) not null default 'GTQ',
-    monto_total NUMERIC(13, 2) not null default 0,
-    codigo_unidad VARCHAR(2) not null default 'U',
-    unidad NUMERIC(13, 2),
-    cod_detalle_servicio INT REFERENCES registros.detalle_servicio(cod_maestro) 
-        on delete restrict on update cascade not null
-);
-
--- Tabla porcentajes_depreciacion
-CREATE TABLE registros.porcentajes_depreciacion (
-    cod_tipo_depreciacion SERIAL PRIMARY KEY,
-    descripcion VARCHAR NOT NULL,
-    porcentaje_depreciacion_anual NUMERIC(5, 2) NOT NULL
-);
-
--- Insertar información en la tabla porcentajes_depreciacion
-INSERT INTO registros.porcentajes_depreciacion (descripcion, porcentaje_depreciacion_anual) values
-('Equipo de computación', 33.33);
-
--- Tabla herramienta
-CREATE TABLE registros.herramienta (
-    cod_herramienta SERIAL PRIMARY KEY,
-    cod_tipo_depreciacion INT REFERENCES registros.porcentajes_depreciacion(cod_tipo_depreciacion) 
-        on delete restrict on update cascade not null,
-    cod_usuario_responsable int references sistema.usuarios(cod_usuario) 
-        on delete restrict on update cascade not null,
-    cod_usuario_creacion int references sistema.usuarios(cod_usuario) 
-        on delete restrict on update cascade not null,
-    fecha_creacion DATE DEFAULT NOW(),
-    fecha_adquisicion DATE DEFAULT NOW(),
-    activo BOOLEAN not null default true,
-    cod_usuario_anulacion int references sistema.usuarios(cod_usuario) 
-        on delete restrict on update cascade,
-    fecha_anulacion date,
-    descripcion VARCHAR,
-    codigo_moneda VARCHAR(3) not null default 'GTQ',
-    monto NUMERIC(13, 2),
-    consumo_electrico NUMERIC(13, 2),
-    codigo_medida_electricidad varchar(1) default 'W'
-);
-
 -- Tabla detalle_servicio
 CREATE TABLE registros.detalle_servicio (
     cod_detalle_servicio SERIAL PRIMARY KEY,
-    cod_herramienta INT REFERENCES registros.herramienta(cod_herramienta) 
-        on delete restrict on update cascade not null,
-    cod_usuario_creacion int references sistema.usuarios(cod_usuario) 
-        on delete restrict on update cascade not null,
+    cod_herramienta INT REFERENCES activos.herramienta(cod_herramienta) on delete restrict on update cascade not null,
+    cod_usuario_creacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade not null,
     fecha_creacion DATE DEFAULT NOW(),
     activo BOOLEAN not null default true,
-    cod_usuario_anulacion int references sistema.usuarios(cod_usuario) 
-        on delete restrict on update cascade,
+    cod_usuario_anulacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade,
     fecha_anulacion date,
     descripcion VARCHAR,
     codigo_moneda VARCHAR(3) not null default 'GTQ',
@@ -124,37 +104,97 @@ CREATE TABLE registros.detalle_servicio (
     total_horas_servicio NUMERIC(13, 2),
     codigo_tiempo_uso varchar(1) not null default 'H',
     monto_total NUMERIC(13, 2),
-    cod_maestro INT REFERENCES registros.maestro(cod_maestro) 
-        on delete restrict on update cascade not null
+    cod_maestro INT REFERENCES registros.maestro(cod_maestro) on delete restrict on update cascade not null
 );
-
--- Tabla costo_fijos
-CREATE TABLE registros.costo_fijos (
-    cod_costo_fijo SERIAL PRIMARY KEY,
-    cod_usuario_creacion INT REFERENCES sistema.usuarios(cod_usuario) 
-        on delete restrict on update cascade,
+-- Tabla detalle_bien
+CREATE TABLE registros.detalle_consumo_materia_prima (
+    cod_consumo_materia_prima SERIAL PRIMARY KEY,
+    cod_materia_prima INT REFERENCES inventario.materia_prima(cod_materia_prima) on delete restrict on update cascade not null,
+    cod_usuario_creacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade not null,
     fecha_creacion DATE DEFAULT NOW(),
-    activo BOOLEAN DEFAULT true NOT NULL,
-    cod_usuario_anulacion INT REFERENCES sistema.usuarios(cod_usuario) 
-        on delete restrict on update cascade,
-    fecha_anulacion DATE,
+    activo BOOLEAN not null default true,
+    cod_usuario_anulacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade,
+    fecha_anulacion date,
     descripcion VARCHAR,
-    codigo_moneda VARCHAR(3) DEFAULT 'GTQ' NOT NULL,
-    monto_total NUMERIC(13, 2)
+    codigo_moneda VARCHAR(3) not null default 'GTQ',
+    monto_total NUMERIC(13, 2) not null default 0,
+    codigo_unidad VARCHAR(2) not null default 'U',
+    unidad NUMERIC(13, 2),
+    cod_detalle_servicio INT REFERENCES registros.detalle_servicio(cod_detalle_servicio) on delete restrict on update cascade not null
 );
-
 -- Tabla movimiento_materia_prima
 CREATE TABLE registros.movimiento_materia_prima (
     cod_registro_materia_prima SERIAL PRIMARY KEY,
-    cod_consumo_materia_prima INT references registros.detalle_consumo_materia_prima(cod_consumo_materia_prima) 
-        on delete restrict on update cascade not null,
-    cod_materia_prima INT REFERENCES registros.materia_prima(cod_materia_prima) 
-        on delete restrict on update cascade not null,
-    cod_usuario_creacion INT REFERENCES sistema.usuarios(cod_usuario) 
-        on delete restrict on update cascade not null,
+    cod_consumo_materia_prima INT references registros.detalle_consumo_materia_prima(cod_consumo_materia_prima) on delete restrict on update cascade not null,
+    cod_materia_prima INT REFERENCES inventario.materia_prima(cod_materia_prima) on delete restrict on update cascade not null,
+    cod_usuario_creacion INT REFERENCES sistema.usuarios(cod_usuario) on delete restrict on update cascade not null,
     fecha_creacion DATE DEFAULT NOW(),
-    cod_usuario_anulacion int references sistema.usuarios(cod_usuario) 
-        on delete restrict on update cascade,
+    cod_usuario_anulacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade,
+    activo BOOLEAN not null default true,
+    fecha_anulacion date,
+    cantidad NUMERIC(13, 2)
+);
+/* COTIZACIONES */
+-- Tabla maestro
+CREATE TABLE cotizaciones.maestro (
+    cod_maestro SERIAL PRIMARY KEY,
+    cod_usuario_creacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade not null,
+    fecha_creacion DATE DEFAULT NOW(),
+    activo BOOLEAN not null default true,
+    cod_usuario_anulacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade,
+    fecha_anulacion date,
+    descripcion VARCHAR,
+    codigo_moneda VARCHAR(3) not null default 'GTQ',
+    monto_total NUMERIC(13, 2) not null default 0,
+    porcentaje_impuesto NUMERIC(5, 2) not null default 5.00,
+    monto_impuesto NUMERIC(13, 2) not null default 0,
+    precio_kW NUMERIC(13, 2) not null default 1,
+    monto_ganancia NUMERIC(13, 2),
+    porcentaje_ganancia NUMERIC(5, 2)
+);
+-- Tabla detalle_servicio
+CREATE TABLE cotizaciones.detalle_servicio (
+    cod_detalle_servicio SERIAL PRIMARY KEY,
+    cod_herramienta INT REFERENCES activos.herramienta(cod_herramienta) on delete restrict on update cascade not null,
+    cod_usuario_creacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade not null,
+    fecha_creacion DATE DEFAULT NOW(),
+    activo BOOLEAN not null default true,
+    cod_usuario_anulacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade,
+    fecha_anulacion date,
+    descripcion VARCHAR,
+    codigo_moneda VARCHAR(3) not null default 'GTQ',
+    tiempo_uso NUMERIC(13, 2),
+    total_consumo_energetico NUMERIC(13, 2),
+    total_depreciacion NUMERIC(13, 2),
+    total_horas_servicio NUMERIC(13, 2),
+    codigo_tiempo_uso varchar(1) not null default 'H',
+    monto_total NUMERIC(13, 2),
+    cod_maestro INT REFERENCES cotizaciones.maestro(cod_maestro) on delete restrict on update cascade not null
+);
+-- Tabla detalle_bien
+CREATE TABLE cotizaciones.detalle_consumo_materia_prima (
+    cod_consumo_materia_prima SERIAL PRIMARY KEY,
+    cod_materia_prima INT REFERENCES inventario.materia_prima(cod_materia_prima) on delete restrict on update cascade not null,
+    cod_usuario_creacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade not null,
+    fecha_creacion DATE DEFAULT NOW(),
+    activo BOOLEAN not null default true,
+    cod_usuario_anulacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade,
+    fecha_anulacion date,
+    descripcion VARCHAR,
+    codigo_moneda VARCHAR(3) not null default 'GTQ',
+    monto_total NUMERIC(13, 2) not null default 0,
+    codigo_unidad VARCHAR(2) not null default 'U',
+    unidad NUMERIC(13, 2),
+    cod_detalle_servicio INT REFERENCES cotizaciones.detalle_servicio(cod_detalle_servicio) on delete restrict on update cascade not null
+);
+-- Tabla movimiento_materia_prima
+CREATE TABLE cotizaciones.movimiento_materia_prima (
+    cod_registro_materia_prima SERIAL PRIMARY KEY,
+    cod_consumo_materia_prima INT references cotizaciones.detalle_consumo_materia_prima(cod_consumo_materia_prima) on delete restrict on update cascade not null,
+    cod_materia_prima INT REFERENCES inventario.materia_prima(cod_materia_prima) on delete restrict on update cascade not null,
+    cod_usuario_creacion INT REFERENCES sistema.usuarios(cod_usuario) on delete restrict on update cascade not null,
+    fecha_creacion DATE DEFAULT NOW(),
+    cod_usuario_anulacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade,
     activo BOOLEAN not null default true,
     fecha_anulacion date,
     cantidad NUMERIC(13, 2)
