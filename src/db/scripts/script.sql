@@ -3,9 +3,13 @@ create SCHEMA cotizaciones;
 create SCHEMA inventario;
 create SCHEMA registros;
 create SCHEMA sistema;
-/* SISTEMA */
+create schema catalogo;
+-- ===========================
+-- SISTEMA
+-- ===========================
+
 -- TABLA DE USUARIO
-create table sistema.usuarios(
+create table IF NOT EXISTS sistema.usuarios(
     cod_usuario SERIAL PRIMARY key,
     fecha_creacion DATE DEFAULT NOW(),
     nombres VARCHAR NOT null,
@@ -15,18 +19,115 @@ create table sistema.usuarios(
     activo boolean not null default true,
     fecha_inactivacion date
 );
-/* ACTIVOS */
+-- ===========================
+-- CATALOGOS
+-- ===========================
+
+-- Tabla de Unidades
+CREATE TABLE IF NOT EXISTS catalogo.unidades (
+    codigo_unidad VARCHAR(4) NOT NULL,
+    tipo VARCHAR(10) NULL,
+    factor_conversion NUMERIC DEFAULT 1.00 NOT NULL,
+    CONSTRAINT unidades_pkey PRIMARY KEY (codigo_unidad)
+);
+
+-- Insertar datos en Unidades
+INSERT INTO catalogo.unidades (codigo_unidad, tipo, factor_conversion)
+VALUES ('M', 'LONG', 1.00000000),
+    ('KG', 'PESO', 1.00000000),
+    ('M3', 'VOLUMEN', 1.00000000),
+    ('LB', 'PESO', 0.45400000),
+    ('CM', 'LONG', 0.01000000),
+    ('FT', 'LONG', 0.30480000),
+    ('IN', 'LONG', 0.02540000),
+    ('CM3', 'VOLUMEN', 0.00000100),
+    ('IN3', 'VOLUMEN', 0.00001637),
+    ('FT3', 'VOLUMEN', 0.02831700);
+
+-- Tabla de Monedas
+CREATE TABLE IF NOT EXISTS catalogo.moneda (
+    codigo_moneda VARCHAR(3) NOT NULL,
+    moneda VARCHAR(50) NOT NULL,
+    tipo_cambio NUMERIC(20, 2) NOT NULL,
+    tipo_cambio_recibo NUMERIC(20, 2) DEFAULT 0.0 NOT NULL,
+    CONSTRAINT moneda_pkey PRIMARY KEY (codigo_moneda)
+);
+
+-- Insertar datos en Monedas
+INSERT INTO catalogo.moneda ( codigo_moneda, moneda, tipo_cambio, tipo_cambio_recibo )
+VALUES ('USD', 'Dólar estadounidense', 7.93, 7.94),
+    ('GTQ', 'Quetzal guatemalteco', 1.00, 1.00);
+
+-- Función para convertir monedas
+CREATE OR REPLACE FUNCTION catalogo.convertir_monedas(
+    monto NUMERIC,
+    unidad_in VARCHAR,
+    unidad_out VARCHAR
+) 
+RETURNS NUMERIC 
+LANGUAGE plpgsql AS $function$
+DECLARE 
+    razon NUMERIC;
+    unidad_1 NUMERIC(13, 4);
+    unidad_2 NUMERIC(13, 4);
+BEGIN
+    SELECT tipo_cambio INTO unidad_1
+    FROM catalogo.moneda
+    WHERE codigo_moneda = unidad_in;
+
+    SELECT tipo_cambio INTO unidad_2
+    FROM catalogo.moneda
+    WHERE codigo_moneda = unidad_out;
+
+    razon := (unidad_1 / unidad_2);
+    RETURN ROUND(monto * razon, 4);
+END;
+$function$;
+
+-- Función para convertir unidades 
+CREATE OR REPLACE FUNCTION catalogo.convertir_unidad(
+    monto NUMERIC,
+    unidad_in VARCHAR,
+    unidad_out VARCHAR,
+    decimales NUMERIC
+) 
+RETURNS NUMERIC 
+LANGUAGE plpgsql AS $$
+DECLARE 
+    razon NUMERIC;
+    unidad_1 NUMERIC(13, 4);
+    unidad_2 NUMERIC(13, 4);
+BEGIN
+    SELECT factor_conversion INTO unidad_1
+    FROM catalogo.unidades
+    WHERE codigo_unidad = unidad_in;
+
+    SELECT factor_conversion INTO unidad_2
+    FROM catalogo.unidades
+    WHERE codigo_unidad = unidad_out;
+
+    razon := (unidad_1 / unidad_2);
+    RETURN ROUND(monto * razon, decimales::INTEGER);
+END;
+$$;
+
+-- ===========================
+-- ACTIVOS 
+-- ===========================
+
 -- Tabla porcentajes_depreciacion
-CREATE TABLE activos.porcentajes_depreciacion (
+CREATE TABLE IF NOT EXISTS activos.porcentajes_depreciacion (
     cod_tipo_depreciacion SERIAL PRIMARY KEY,
     descripcion VARCHAR NOT NULL,
     porcentaje_depreciacion_anual NUMERIC(5, 2) NOT NULL
 );
+
 -- Insertar información en la tabla porcentajes_depreciacion
 INSERT INTO activos.porcentajes_depreciacion (descripcion, porcentaje_depreciacion_anual)
 values ('Equipo de computación', 33.33);
+
 -- Tabla herramienta
-CREATE TABLE activos.herramienta (
+CREATE TABLE IF NOT EXISTS activos.herramienta (
     cod_herramienta SERIAL PRIMARY KEY,
     cod_tipo_depreciacion INT REFERENCES activos.porcentajes_depreciacion(cod_tipo_depreciacion) on delete restrict on update cascade not null,
     cod_usuario_responsable int references sistema.usuarios(cod_usuario) on delete restrict on update cascade not null,
@@ -38,13 +139,17 @@ CREATE TABLE activos.herramienta (
     fecha_anulacion date,
     descripcion VARCHAR,
     codigo_moneda VARCHAR(3) not null default 'GTQ',
+    CONSTRAINT fk_codigo_moneda FOREIGN KEY (codigo_moneda) REFERENCES catalogo.moneda(codigo_moneda),
     monto NUMERIC(13, 2),
     consumo_electrico NUMERIC(13, 2),
     codigo_medida_electricidad varchar(1) default 'W'
 );
-/* INVENTARIO */
+-- ===========================
+-- INVENTARIO
+-- ===========================
+
 -- Tabla materia_prima
-CREATE TABLE inventario.materia_prima (
+CREATE TABLE IF NOT EXISTS inventario.materia_prima (
     cod_materia_prima SERIAL PRIMARY KEY,
     cod_usuario_creacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade,
     fecha_creacion DATE DEFAULT NOW(),
@@ -53,13 +158,18 @@ CREATE TABLE inventario.materia_prima (
     fecha_anulacion date,
     descripcion VARCHAR,
     codigo_moneda VARCHAR(3) not null default 'GTQ',
+    CONSTRAINT fk_codigo_moneda FOREIGN KEY (codigo_moneda) REFERENCES catalogo.moneda(codigo_moneda),
     monto NUMERIC(13, 2),
     cantidad NUMERIC(13, 2),
     codigo_unidad VARCHAR(2)
 );
-/* REGISTROS */
+
+-- ===========================
+-- REGISTROS  
+-- ===========================
+
 -- Tabla costo_fijos
-CREATE TABLE registros.costo_fijos (
+CREATE TABLE IF NOT EXISTS registros.costo_fijos (
     cod_costo_fijo SERIAL PRIMARY KEY,
     cod_usuario_creacion INT REFERENCES sistema.usuarios(cod_usuario) on delete restrict on update cascade,
     fecha_creacion DATE DEFAULT NOW(),
@@ -70,8 +180,9 @@ CREATE TABLE registros.costo_fijos (
     codigo_moneda VARCHAR(3) DEFAULT 'GTQ' NOT NULL,
     monto_total NUMERIC(13, 2)
 );
+
 -- Tabla maestro
-CREATE TABLE registros.maestro (
+CREATE TABLE IF NOT EXISTS registros.maestro (
     cod_maestro SERIAL PRIMARY KEY,
     cod_usuario_creacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade not null,
     fecha_creacion DATE DEFAULT NOW(),
@@ -80,6 +191,7 @@ CREATE TABLE registros.maestro (
     fecha_anulacion date,
     descripcion VARCHAR,
     codigo_moneda VARCHAR(3) not null default 'GTQ',
+    CONSTRAINT fk_codigo_moneda FOREIGN KEY (codigo_moneda) REFERENCES catalogo.moneda(codigo_moneda),
     monto_total NUMERIC(13, 2) not null default 0,
     porcentaje_impuesto NUMERIC(5, 2) not null default 5.00,
     monto_impuesto NUMERIC(13, 2) not null default 0,
@@ -87,8 +199,9 @@ CREATE TABLE registros.maestro (
     monto_ganancia NUMERIC(13, 2),
     porcentaje_ganancia NUMERIC(5, 2)
 );
+
 -- Tabla detalle_servicio
-CREATE TABLE registros.detalle_servicio (
+CREATE TABLE IF NOT EXISTS registros.detalle_servicio (
     cod_detalle_servicio SERIAL PRIMARY KEY,
     cod_herramienta INT REFERENCES activos.herramienta(cod_herramienta) on delete restrict on update cascade not null,
     cod_usuario_creacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade not null,
@@ -98,6 +211,7 @@ CREATE TABLE registros.detalle_servicio (
     fecha_anulacion date,
     descripcion VARCHAR,
     codigo_moneda VARCHAR(3) not null default 'GTQ',
+    CONSTRAINT fk_codigo_moneda FOREIGN KEY (codigo_moneda) REFERENCES catalogo.moneda(codigo_moneda),
     tiempo_uso NUMERIC(13, 2),
     total_consumo_energetico NUMERIC(13, 2),
     total_depreciacion NUMERIC(13, 2),
@@ -106,8 +220,9 @@ CREATE TABLE registros.detalle_servicio (
     monto_total NUMERIC(13, 2),
     cod_maestro INT REFERENCES registros.maestro(cod_maestro) on delete restrict on update cascade not null
 );
+
 -- Tabla detalle_bien
-CREATE TABLE registros.detalle_consumo_materia_prima (
+CREATE TABLE IF NOT EXISTS registros.detalle_consumo_materia_prima (
     cod_consumo_materia_prima SERIAL PRIMARY KEY,
     cod_materia_prima INT REFERENCES inventario.materia_prima(cod_materia_prima) on delete restrict on update cascade not null,
     cod_usuario_creacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade not null,
@@ -117,13 +232,16 @@ CREATE TABLE registros.detalle_consumo_materia_prima (
     fecha_anulacion date,
     descripcion VARCHAR,
     codigo_moneda VARCHAR(3) not null default 'GTQ',
+    CONSTRAINT fk_codigo_moneda FOREIGN KEY (codigo_moneda) REFERENCES catalogo.moneda(codigo_moneda),
     monto_total NUMERIC(13, 2) not null default 0,
-    codigo_unidad VARCHAR(2) not null default 'U',
+    codigo_unidad VARCHAR(4) NOT NULL,
+    CONSTRAINT fk_codigo_unidad FOREIGN KEY (codigo_unidad) REFERENCES catalogo.unidades(codigo_unidad),
     unidad NUMERIC(13, 2),
     cod_detalle_servicio INT REFERENCES registros.detalle_servicio(cod_detalle_servicio) on delete restrict on update cascade not null
 );
+
 -- Tabla movimiento_materia_prima
-CREATE TABLE registros.movimiento_materia_prima (
+CREATE TABLE IF NOT EXISTS registros.movimiento_materia_prima (
     cod_registro_materia_prima SERIAL PRIMARY KEY,
     cod_consumo_materia_prima INT references registros.detalle_consumo_materia_prima(cod_consumo_materia_prima) on delete restrict on update cascade not null,
     cod_materia_prima INT REFERENCES inventario.materia_prima(cod_materia_prima) on delete restrict on update cascade not null,
@@ -134,9 +252,14 @@ CREATE TABLE registros.movimiento_materia_prima (
     fecha_anulacion date,
     cantidad NUMERIC(13, 2)
 );
-/* COTIZACIONES */
+
+
+-- ===========================
+-- COTIZACIONES 
+-- ===========================
+
 -- Tabla maestro
-CREATE TABLE cotizaciones.maestro (
+CREATE TABLE IF NOT EXISTS cotizaciones.maestro (
     cod_maestro SERIAL PRIMARY KEY,
     cod_usuario_creacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade not null,
     fecha_creacion DATE DEFAULT NOW(),
@@ -145,6 +268,7 @@ CREATE TABLE cotizaciones.maestro (
     fecha_anulacion date,
     descripcion VARCHAR,
     codigo_moneda VARCHAR(3) not null default 'GTQ',
+    CONSTRAINT fk_codigo_moneda FOREIGN KEY (codigo_moneda) REFERENCES catalogo.moneda(codigo_moneda),
     monto_total NUMERIC(13, 2) not null default 0,
     porcentaje_impuesto NUMERIC(5, 2) not null default 5.00,
     monto_impuesto NUMERIC(13, 2) not null default 0,
@@ -152,8 +276,9 @@ CREATE TABLE cotizaciones.maestro (
     monto_ganancia NUMERIC(13, 2),
     porcentaje_ganancia NUMERIC(5, 2)
 );
+
 -- Tabla detalle_servicio
-CREATE TABLE cotizaciones.detalle_servicio (
+CREATE TABLE IF NOT EXISTS cotizaciones.detalle_servicio (
     cod_detalle_servicio SERIAL PRIMARY KEY,
     cod_herramienta INT REFERENCES activos.herramienta(cod_herramienta) on delete restrict on update cascade not null,
     cod_usuario_creacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade not null,
@@ -163,6 +288,7 @@ CREATE TABLE cotizaciones.detalle_servicio (
     fecha_anulacion date,
     descripcion VARCHAR,
     codigo_moneda VARCHAR(3) not null default 'GTQ',
+    CONSTRAINT fk_codigo_moneda FOREIGN KEY (codigo_moneda) REFERENCES catalogo.moneda(codigo_moneda),
     tiempo_uso NUMERIC(13, 2),
     total_consumo_energetico NUMERIC(13, 2),
     total_depreciacion NUMERIC(13, 2),
@@ -171,8 +297,9 @@ CREATE TABLE cotizaciones.detalle_servicio (
     monto_total NUMERIC(13, 2),
     cod_maestro INT REFERENCES cotizaciones.maestro(cod_maestro) on delete restrict on update cascade not null
 );
+
 -- Tabla detalle_bien
-CREATE TABLE cotizaciones.detalle_consumo_materia_prima (
+CREATE TABLE IF NOT EXISTS cotizaciones.detalle_consumo_materia_prima (
     cod_consumo_materia_prima SERIAL PRIMARY KEY,
     cod_materia_prima INT REFERENCES inventario.materia_prima(cod_materia_prima) on delete restrict on update cascade not null,
     cod_usuario_creacion int references sistema.usuarios(cod_usuario) on delete restrict on update cascade not null,
@@ -182,13 +309,16 @@ CREATE TABLE cotizaciones.detalle_consumo_materia_prima (
     fecha_anulacion date,
     descripcion VARCHAR,
     codigo_moneda VARCHAR(3) not null default 'GTQ',
+    CONSTRAINT fk_codigo_moneda FOREIGN KEY (codigo_moneda) REFERENCES catalogo.moneda(codigo_moneda), 
     monto_total NUMERIC(13, 2) not null default 0,
-    codigo_unidad VARCHAR(2) not null default 'U',
+    codigo_unidad VARCHAR(4) NOT NULL,
+    CONSTRAINT fk_codigo_unidad FOREIGN KEY (codigo_unidad) REFERENCES catalogo.unidades(codigo_unidad),
     unidad NUMERIC(13, 2),
     cod_detalle_servicio INT REFERENCES cotizaciones.detalle_servicio(cod_detalle_servicio) on delete restrict on update cascade not null
 );
+
 -- Tabla movimiento_materia_prima
-CREATE TABLE cotizaciones.movimiento_materia_prima (
+CREATE TABLE IF NOT EXISTS cotizaciones.movimiento_materia_prima (
     cod_registro_materia_prima SERIAL PRIMARY KEY,
     cod_consumo_materia_prima INT references cotizaciones.detalle_consumo_materia_prima(cod_consumo_materia_prima) on delete restrict on update cascade not null,
     cod_materia_prima INT REFERENCES inventario.materia_prima(cod_materia_prima) on delete restrict on update cascade not null,
@@ -200,76 +330,10 @@ CREATE TABLE cotizaciones.movimiento_materia_prima (
     cantidad NUMERIC(13, 2)
 );
 
-CREATE OR REPLACE FUNCTION actualizar_monto_total_maestro()
-RETURNS TRIGGER AS $$
-BEGIN
-  -- Sumar los montos de detalle_bien con activo = true
-  UPDATE registros.maestro
-  SET monto_total = (
-    SELECT COALESCE(SUM(db.monto_total), 0)
-    FROM registros.detalle_bien db
-    WHERE db.cod_maestro = NEW.cod_maestro AND db.activo = true
-  ) 
-  + (
-    -- Sumar los montos de detalle_servicio con activo = true
-    SELECT COALESCE(SUM(ds.monto_total), 0)
-    FROM registros.detalle_servicio ds
-    WHERE ds.cod_maestro = NEW.cod_maestro AND ds.activo = true
-  )
-  WHERE cod_maestro = NEW.cod_maestro;
 
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trigger_actualizar_maestro_bien
-AFTER INSERT OR UPDATE ON registros.detalle_bien
-FOR EACH ROW
-EXECUTE FUNCTION actualizar_monto_total_maestro();
-
-CREATE TRIGGER trigger_actualizar_maestro_servicio
-AFTER INSERT OR UPDATE ON registros.detalle_servicio
-FOR EACH ROW
-EXECUTE FUNCTION actualizar_monto_total_maestro();
-
-
-CREATE OR REPLACE FUNCTION calcular_montos_maestro()
-RETURNS TRIGGER AS $$
-DECLARE
-  base_total NUMERIC;
-  tasa_impuesto_ajustada NUMERIC;
-BEGIN
-  -- Calcular el monto de la ganancia
-  NEW.monto_ganancia := NEW.monto_total * (NEW.porcentaje_ganancia / 100.0);
-
-  -- Calcular la base total sobre la cual se aplicará el impuesto
-  base_total := NEW.monto_total + NEW.monto_ganancia;
-
-  -- Calcular la tasa de impuesto ajustada
-  tasa_impuesto_ajustada := NEW.porcentaje_impuesto / (100.0 - NEW.porcentaje_impuesto);
-
-  -- Calcular el monto del impuesto
-  NEW.monto_impuesto := base_total * tasa_impuesto_ajustada;
-
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-
-
-CREATE TRIGGER trigger_calcular_montos_maestro
-BEFORE INSERT OR UPDATE ON registros.maestro
-FOR EACH ROW
-EXECUTE FUNCTION calcular_montos_maestro();
-
-
-
---DROP SCHEMA registros CASCADE;
---drop table registros.costo_fijos
---DROP TABLE registros.detalle_servicio;
---DROP TABLE registros.detalle_bien;
---DROP TABLE registros.maestro cascade;
---DROP TABLE registros.herramienta;
---DROP TABLE registros.materia_prima;
---DROP TABLE registros.porcentajes_depreciacion;
---DROP TABLE sistema.usuarios;
+--DROP SCHEMA IF EXISTS activos CASCADE;
+--DROP SCHEMA IF EXISTS catalogo CASCADE;
+--DROP SCHEMA IF EXISTS cotizaciones CASCADE;
+--DROP SCHEMA IF EXISTS inventario CASCADE;
+--DROP SCHEMA IF EXISTS registros CASCADE;
+--DROP SCHEMA IF EXISTS sistema CASCADE;
