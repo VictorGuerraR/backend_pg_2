@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:17.4
     container_name: mi_postgres
     restart: always
     environment:
@@ -9,6 +9,6 @@ services:
       POSTGRES_PASSWORD: admin123
       POSTGRES_DB: sistema
     volumes:
-      - ~/Otros/bd:/var/lib/postgresql/data
+      - ~/Desktop/database/db:/var/lib/postgresql/data
     ports:
       - "2499:5432"
